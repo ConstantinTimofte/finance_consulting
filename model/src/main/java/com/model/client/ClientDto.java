@@ -3,6 +3,8 @@ package com.model.client;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 
 @Data
@@ -18,6 +20,7 @@ public class ClientDto {
     private Boolean payment;
     private Integer yearSalary;
     @NotEmpty
+    @Email
     private String emailAdress;
     private String phoneNumber;
     private String city;

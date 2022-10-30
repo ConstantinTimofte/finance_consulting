@@ -35,9 +35,15 @@ public class ClientForm extends FormLayout {
     public ClientDto clientDto;
 
     public ClientForm() {
-        setInputClearButton();
-        setBinder();
+        //  setBinder();
+        binder.bindInstanceFields(this);
+        binder.forField(phoneNumber)
+                .withValidator(new RegexpValidator("Invalid phone number", "^[0-9]*$"))
+                .bind(ClientDto::getPhoneNumber, ClientDto::setPhoneNumber);
+        //  binder.addStatusChangeListener(e -> save.setEnabled(binder.isValid()));  ---> copre il bottone nel caso non passa i controlli del binding*/
+
         setInputFiledsStyle();
+        setInputClearButton();
 
         HorizontalLayout horizontalLayout = new HorizontalLayout(phoneNumber, yearSalary);
         horizontalLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);/*uno da un lato - l atro dall opposto*/
@@ -60,16 +66,15 @@ public class ClientForm extends FormLayout {
         cancel.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         delete.addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_ERROR);
 
-        HorizontalLayout buttonsLayout = new HorizontalLayout(delete, cancel, save);
-
-        buttonsLayout.setSpacing(true);
-        buttonsLayout.setFlexGrow(1, save);/*ingrandesce il bottone per occupare tutto il width*/
-
         save.addClickListener(event -> validateAndSave());
         cancel.addClickListener(event -> fireEvent(new CloseEvent(this)));
 
         save.addClickShortcut(Key.ENTER);
         cancel.addClickShortcut(Key.ESCAPE);
+
+        HorizontalLayout buttonsLayout = new HorizontalLayout(delete, cancel, save);
+        buttonsLayout.setSpacing(true);
+        buttonsLayout.setFlexGrow(1, save);/*ingrandesce il bottone per occupare tutto il width*/
         return buttonsLayout;
     }
 
@@ -90,8 +95,8 @@ public class ClientForm extends FormLayout {
     }
 
     private void setBinder() {
-        // binder.bindInstanceFields(this);//validazione oggetto*/
-        binder.forField(firstName)/*.withValidator(value -> value.isEmpty(),"Invalid name")*/.bind(ClientDto::getFirstName, ClientDto::setFirstName);// ---> By field*/
+//VALIDAZIONE PROP OGG
+        binder.forField(firstName).bind(ClientDto::getFirstName, ClientDto::setFirstName);// ---> By field*/
         binder.forField(lastName).bind(ClientDto::getLastName, ClientDto::setLastName);
         binder.forField(yearSalary).bind(ClientDto::getYearSalary, ClientDto::setYearSalary);
         binder.forField(emailAdress)
@@ -121,7 +126,7 @@ public class ClientForm extends FormLayout {
         notes.setClearButtonVisible(true);
     }
 
-    private void setInputFiledsStyle(){
+    private void setInputFiledsStyle() {
         phoneNumber.setWidth("14em");
         cnp.setWidth("14em");
         yearSalary.setWidth("12em");
