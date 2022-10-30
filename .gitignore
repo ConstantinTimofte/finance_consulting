@@ -1,0 +1,3 @@
+# Project exclude paths
+/clients-ui/node_modules/
+/node_modules/
