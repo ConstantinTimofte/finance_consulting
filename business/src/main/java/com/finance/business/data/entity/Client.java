@@ -15,7 +15,7 @@ import java.util.Set;
 @Table(name = "client")
 public class Client {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+/*    @GeneratedValue(strategy = GenerationType.AUTO)*/
     @Column(name = "id", nullable = false)
     private Integer id;
 

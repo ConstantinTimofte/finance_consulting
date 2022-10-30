@@ -26,7 +26,7 @@ public class ClientService {
             System.err.println("Contact is null");
         }else {
             try {
-          //      clientFeign.save(clientDto);
+              clientFeign.save(clientDto);
             }catch (Exception e ){
                 System.out.println(e.getMessage());
             }

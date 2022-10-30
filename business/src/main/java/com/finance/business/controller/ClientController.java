@@ -4,11 +4,9 @@ import com.finance.business.data.entity.Client;
 import com.finance.business.data.repository.ClientRepository;
 import com.model.client.ClientDto;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,8 +40,9 @@ public class ClientController {
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public void save(ClientDto clientDto) {
+    public void save(@RequestBody ClientDto clientDto) {
         Client client = new Client();
+        clientDto.setClient(clientDto.getClient() == null ? false : clientDto.getClient());
         modelMapper.map(clientDto, client);
         clientRepository.save(client);
     }
