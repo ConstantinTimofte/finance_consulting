@@ -21,16 +21,15 @@ public class ClientService {
         }
     }
 
-    public void  saveClient(ClientDto clientDto){
+    public void saveClient(ClientDto clientDto) {
         if (clientDto == null) {
             System.err.println("Contact is null");
-        }else {
-            try {
-              clientFeign.save(clientDto);
-            }catch (Exception e ){
-                System.out.println(e.getMessage());
-            }
-
+        } else {
+            clientFeign.save(clientDto);
         }
+    }
+
+    public void deleteContact(ClientDto clientDto) {
+        clientFeign.delete(clientDto);
     }
 }

@@ -1,0 +1,10 @@
+html{
+    --lumo-primary-color: #aa00ff;
+    --lumo-primary-text-color: #57ee00;
+    --lumo-primary-color-50pct: #d600ee;
+    --lumo-primary-color-10pct: #deee00;
+}
+
+#header{
+        background: var(--lumo-primary-color);
+}

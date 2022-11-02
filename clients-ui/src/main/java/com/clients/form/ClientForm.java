@@ -68,6 +68,7 @@ public class ClientForm extends FormLayout {
 
         save.addClickListener(event -> validateAndSave());
         cancel.addClickListener(event -> fireEvent(new CloseEvent(this)));
+        delete.addClickListener(event -> fireEvent(new DeleteEvent(this, clientDto)));
 
         save.addClickShortcut(Key.ENTER);
         cancel.addClickShortcut(Key.ESCAPE);

@@ -7,6 +7,7 @@ import com.model.client.ClientDto;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -42,7 +43,10 @@ public class ClientsView extends VerticalLayout {
     }
 
     /* https://vaadin.com/docs/latest/components/grid*/
+    //https://vaadin.com/docs/latest/components/grid/flow#sorting
+    //Theme : https://www.youtube.com/watch?v=Swki9XXs9SA  16.27
     private void configureGrid() {
+        grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
         grid.addClassName("contact-grid");//classe css
         grid.setSizeFull();//luncghezza grid
 
@@ -66,6 +70,7 @@ public class ClientsView extends VerticalLayout {
         clientForm.setWidth("40em");
         clientForm.addListener(ClientForm.SaveEvent.class, this::saveClient);
         clientForm.addListener(ClientForm.CloseEvent.class, closeEvent -> closeEditor());
+        clientForm.addListener(ClientForm.DeleteEvent.class,this::deleteClient);
     }
 
     private Component getToolbar() {
@@ -105,7 +110,11 @@ public class ClientsView extends VerticalLayout {
         clientForm.setVisible(false);
         clientForm.removeClassName("editing");
     }
-
+    private void deleteClient(ClientForm.DeleteEvent event) {
+        clientService.deleteContact(event.getClientDto());
+        updateList();
+        closeEditor();
+    }
     private void saveClient(ClientForm.SaveEvent event) {
         clientService.saveClient(event.getClientDto());
         updateList();

@@ -3,6 +3,8 @@ package com.finance.business.data.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -15,7 +17,8 @@ import java.util.Set;
 @Table(name = "client")
 public class Client {
     @Id
-/*    @GeneratedValue(strategy = GenerationType.AUTO)*/
+    //https://stackoverflow.com/questions/32719662/generationtype-sequence-does-not-generate-sequence-in-hibernate
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
 
@@ -37,7 +40,7 @@ public class Client {
     @Column(name = "email_adress")
     private String emailAdress;
 
-    @Column(name = "phone_number",length = 20)
+    @Column(name = "phone_number", length = 20)
     private String phoneNumber;
 
     @Column(name = "city")
@@ -49,7 +52,7 @@ public class Client {
     @Column(name = "notes", length = 10485760)
     private String notes;
 
-    @OneToMany(mappedBy = "idClient",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "idClient", fetch = FetchType.LAZY)
     private Set<ClientInvestment> clientInvestments = new LinkedHashSet<>();
 
 }
