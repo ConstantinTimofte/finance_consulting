@@ -32,4 +32,5 @@ public class ClientService {
     public void deleteContact(ClientDto clientDto) {
         clientFeign.delete(clientDto);
     }
+
 }
