@@ -1,6 +1,7 @@
 package com.clients.views.clients;
 
 import com.clients.form.ClientForm;
+import com.clients.form.ClientInvestmentForm;
 import com.clients.service.ClientService;
 import com.clients.views.MainLayout;
 import com.model.client.ClientDto;
@@ -15,6 +16,8 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.LitRenderer;
+import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.function.SerializableBiConsumer;
 import com.vaadin.flow.router.PageTitle;
@@ -26,6 +29,7 @@ public class ClientsView extends VerticalLayout {
 
     private Grid<ClientDto> grid = new Grid<>(ClientDto.class);
     private ClientForm clientForm;
+    private ClientInvestmentForm clientInvestmentForm;
     private TextField filterText = new TextField();
     private ClientService clientService;
 
@@ -36,15 +40,16 @@ public class ClientsView extends VerticalLayout {
         setSizeFull();
         configureGrid();
         configureForm();
+        configureClientInvestmentForm();
 
         add(getToolbar(), getContent());
         updateList();
         closeEditor();
+        closeClientInvestmentForm();
     }
-
-    /* https://vaadin.com/docs/latest/components/grid*/
-    //https://vaadin.com/docs/latest/components/grid/flow#sorting
-    //Theme : https://www.youtube.com/watch?v=Swki9XXs9SA  16.27
+    /** @see   https://vaadin.com/docs/latest/components/grid
+     * https://vaadin.com/docs/latest/components/grid/flow#sorting
+     *  Theme : https://www.youtube.com/watch?v=Swki9XXs9SA  16.27*/
     private void configureGrid() {
         grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
         grid.addClassName("contact-grid");//classe css
@@ -58,7 +63,12 @@ public class ClientsView extends VerticalLayout {
                 .setHeader("Payment");
 
         grid.addColumn(createIsClientComponentRenderer()).setHeader("Status");
+
         grid.getColumns().forEach(columns -> columns.setAutoWidth(true)); // gestire oggetto per oggetto
+
+        grid.addColumn(createActionRenderer())
+                //    .setAutoWidth(true).setFlexGrow(0).setHeader("Action");
+                .setAutoWidth(true);
 
         /*Selezionando una colonna (SELEZIONANDO LA STESSA L OGGETTO E NULL)*/
         grid.asSingleSelect().addValueChangeListener(event -> editClient(event.getValue()));
@@ -70,12 +80,18 @@ public class ClientsView extends VerticalLayout {
         clientForm.setWidth("40em");
         clientForm.addListener(ClientForm.SaveEvent.class, this::saveClient);
         clientForm.addListener(ClientForm.CloseEvent.class, closeEvent -> closeEditor());
-        clientForm.addListener(ClientForm.DeleteEvent.class,this::deleteClient);
+        clientForm.addListener(ClientForm.DeleteEvent.class, this::deleteClient);
+    }
+
+    private void configureClientInvestmentForm() {
+        clientInvestmentForm = new ClientInvestmentForm();
+        clientInvestmentForm.setVisible(false);
     }
 
     private Component getToolbar() {
-        filterText.setPlaceholder("Search by name....");
+        filterText.setPlaceholder("Search name...");
         filterText.setClearButtonVisible(true);
+        filterText.setPrefixComponent(new Icon(VaadinIcon.SEARCH));
 
         /*l elemento viene recuperato quando si e smesso di inserire input
         ('char') utile per non eseguire chiamate multiple al database */
@@ -85,6 +101,7 @@ public class ClientsView extends VerticalLayout {
 
         Button clientButton = new Button("Add");
         clientButton.addClickListener(event -> saveClient());//Reindirizzamento sulla form
+        clientButton.setAutofocus(true);
 
         HorizontalLayout toolbar = new HorizontalLayout(filterText, clientButton);
         toolbar.addClassName("toolbar");
@@ -93,9 +110,10 @@ public class ClientsView extends VerticalLayout {
 
 
     private Component getContent() {
-        HorizontalLayout horizontalLayout = new HorizontalLayout(grid, clientForm);
+        HorizontalLayout horizontalLayout = new HorizontalLayout(grid, clientForm, clientInvestmentForm);
         horizontalLayout.setFlexGrow(1, grid);
         horizontalLayout.setFlexGrow(2, clientForm);
+        horizontalLayout.setFlexGrow(3, clientInvestmentForm);
         horizontalLayout.setClassName("content");
         horizontalLayout.setSizeFull();
         return horizontalLayout;
@@ -110,11 +128,19 @@ public class ClientsView extends VerticalLayout {
         clientForm.setVisible(false);
         clientForm.removeClassName("editing");
     }
+
+    private void closeClientInvestmentForm() {
+        clientInvestmentForm.setClient(null);
+        clientInvestmentForm.setVisible(false);
+        clientInvestmentForm.removeClassName("editing");
+    }
+
     private void deleteClient(ClientForm.DeleteEvent event) {
         clientService.deleteContact(event.getClientDto());
         updateList();
         closeEditor();
     }
+
     private void saveClient(ClientForm.SaveEvent event) {
         clientService.saveClient(event.getClientDto());
         updateList();
@@ -131,6 +157,7 @@ public class ClientsView extends VerticalLayout {
         if (clientDto == null) {/*Se non selezioni un contatto*/
             closeEditor();
         } else {
+            // closeClientInvestmentForm();
             clientForm.setClient(clientDto);/*valorizzo la form con l oggetto attuale*/
             clientForm.setVisible(true);
             addClassName("editing");
@@ -171,5 +198,17 @@ public class ClientsView extends VerticalLayout {
         return icon;
     }
 
+    //https://lbruun.github.io/Vaadin.LitRenderer-Examples/#_create_an_icon_button
+    private Renderer<ClientDto> createActionRenderer() {
+        //             return LitRenderer.<ClientDto> of("<vaadin-button theme=\"primary\" @click= \"${invest}\" >Invest</vaadin-button>").withFunction("invest", clientDto -> {
+        return LitRenderer.<ClientDto>of("<vaadin-button autofocus=\"true\"  @click= \"${invest}\" >Invest</vaadin-button>").withFunction("invest", clientDto -> {
+
+            closeEditor();//form cliente
+/*            clientInvestmentForm = new ClientInvestmentForm();*/
+            clientInvestmentForm.setVisible(true);
+            clientInvestmentForm.setClient(clientDto);
+            clientInvestmentForm.setWidth("60em");
+        });
+    }
 
 }
