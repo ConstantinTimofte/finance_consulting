@@ -5,7 +5,9 @@ import lombok.*;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 @Builder
@@ -16,8 +18,9 @@ import java.util.Set;
 @Entity
 @Table(name = "client")
 public class Client {
+
     @Id
-    //https://stackoverflow.com/questions/32719662/generationtype-sequence-does-not-generate-sequence-in-hibernate
+    /** @see https://stackoverflow.com/questions/32719662/generationtype-sequence-does-not-generate-sequence-in-hibernate */
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
@@ -52,7 +55,7 @@ public class Client {
     @Column(name = "notes", length = 10485760)
     private String notes;
 
-    @OneToMany(mappedBy = "idClient", fetch = FetchType.LAZY)
-    private Set<ClientInvestment> clientInvestments = new LinkedHashSet<>();
+    @OneToMany(mappedBy = "idClient", fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    private List<ClientInvestment> clientInvestments = new ArrayList<>();
 
 }

@@ -14,7 +14,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 
-public class MainLayout  extends AppLayout {
+public class MainLayout extends AppLayout {
     private H2 viewTitle;
 
     public MainLayout() {
@@ -52,14 +52,16 @@ public class MainLayout  extends AppLayout {
         Footer layout = new Footer();
         return layout;
     }
+
     @Override
     protected void afterNavigation() {
         super.afterNavigation();
         viewTitle.setText(getCurrentPageTitle());
     }
+
     private String getCurrentPageTitle() {
         PageTitle title = getContent().getClass().getAnnotation(PageTitle.class);
         return title == null ? "" : title.value();
     }
-    
+
 }

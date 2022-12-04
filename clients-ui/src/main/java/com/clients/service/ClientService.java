@@ -2,9 +2,9 @@ package com.clients.service;
 
 import com.model.client.ClientDto;
 import com.model.client.ClientFeign;
+import com.model.clientinvest.ClientInvestmentDto;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
@@ -31,6 +31,20 @@ public class ClientService {
 
     public void deleteContact(ClientDto clientDto) {
         clientFeign.delete(clientDto);
+    }
+
+    public void saveInvestment(ClientInvestmentDto clientInvestmentDto) throws Exception {
+        if (clientInvestmentDto == null ||
+                (clientInvestmentDto.getInvestmentName() == null || clientInvestmentDto.getInvestmentName().isEmpty())) {
+            throw new Exception();
+        } else {
+            clientFeign.saveInvestment(clientInvestmentDto);
+        }
+    }
+
+    /** Proponi investimenti che il cliente non ha ancora fatto*/
+    public List<String> getPossibleInvestments(String firstName, String secondName) {
+        return clientFeign.allInvestments(firstName, secondName);
     }
 
 }

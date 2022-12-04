@@ -5,6 +5,7 @@ import com.clients.form.ClientInvestmentForm;
 import com.clients.service.ClientService;
 import com.clients.views.MainLayout;
 import com.model.client.ClientDto;
+import com.model.clientinvest.ClientInvestmentDto;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
@@ -47,9 +48,12 @@ public class ClientsView extends VerticalLayout {
         closeEditor();
         closeClientInvestmentForm();
     }
-    /** @see   https://vaadin.com/docs/latest/components/grid
+
+    /**
+     * @see https://vaadin.com/docs/latest/components/grid
      * https://vaadin.com/docs/latest/components/grid/flow#sorting
-     *  Theme : https://www.youtube.com/watch?v=Swki9XXs9SA  16.27*/
+     * Theme : https://www.youtube.com/watch?v=Swki9XXs9SA  16.27
+     */
     private void configureGrid() {
         grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
         grid.addClassName("contact-grid");//classe css
@@ -84,8 +88,11 @@ public class ClientsView extends VerticalLayout {
     }
 
     private void configureClientInvestmentForm() {
-        clientInvestmentForm = new ClientInvestmentForm();
+        clientInvestmentForm = new ClientInvestmentForm(clientService);
         clientInvestmentForm.setVisible(false);
+
+        clientInvestmentForm.addListener(ClientInvestmentForm.SaveEvent.class, this::saveInvestment);
+        clientInvestmentForm.addListener(ClientInvestmentForm.CloseEvent.class, closeEvent -> closeClientInvestmentForm());
     }
 
     private Component getToolbar() {
@@ -130,7 +137,7 @@ public class ClientsView extends VerticalLayout {
     }
 
     private void closeClientInvestmentForm() {
-        clientInvestmentForm.setClient(null);
+        clientInvestmentForm.setClientInvestmentDto(null);
         clientInvestmentForm.setVisible(false);
         clientInvestmentForm.removeClassName("editing");
     }
@@ -157,10 +164,21 @@ public class ClientsView extends VerticalLayout {
         if (clientDto == null) {/*Se non selezioni un contatto*/
             closeEditor();
         } else {
-            // closeClientInvestmentForm();
+             if(clientInvestmentForm != null ){/*nel caso la finestra dei investimenti e aperta*/
+                 closeClientInvestmentForm();
+             }
             clientForm.setClient(clientDto);/*valorizzo la form con l oggetto attuale*/
             clientForm.setVisible(true);
             addClassName("editing");
+        }
+    }
+
+    private void saveInvestment(ClientInvestmentForm.SaveEvent event) {
+        try {
+            clientService.saveInvestment(event.getClientInvestmentDto());
+            closeClientInvestmentForm();
+        } catch (Exception e) {
+            System.err.println("Something wrong with the valoriz. of the form"); ///TODO
         }
     }
 
@@ -204,9 +222,9 @@ public class ClientsView extends VerticalLayout {
         return LitRenderer.<ClientDto>of("<vaadin-button autofocus=\"true\"  @click= \"${invest}\" >Invest</vaadin-button>").withFunction("invest", clientDto -> {
 
             closeEditor();//form cliente
-/*            clientInvestmentForm = new ClientInvestmentForm();*/
             clientInvestmentForm.setVisible(true);
-            clientInvestmentForm.setClient(clientDto);
+            clientInvestmentForm.setClientInvestmentDto(new ClientInvestmentDto(clientDto.getFirstName(),
+                    clientDto.getLastName(), 1, clientDto.getYearSalary(), 0, clientDto.getClient()));
             clientInvestmentForm.setWidth("60em");
         });
     }

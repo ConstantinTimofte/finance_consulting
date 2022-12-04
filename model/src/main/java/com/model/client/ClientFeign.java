@@ -1,5 +1,6 @@
 package com.model.client;
 
+import com.model.clientinvest.ClientInvestmentDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,4 +20,10 @@ public interface ClientFeign {
 
     @DeleteMapping("/delete")
     void delete(@RequestBody ClientDto clientDto);
+
+    @PostMapping("/invest")
+    void saveInvestment(@RequestBody ClientInvestmentDto clientInvestmentDto);
+
+    @GetMapping("/investments/{firstname}/{lastname}")
+    List<String> allInvestments(@PathVariable("firstname") String firstName, @PathVariable("lastname") String lastName);
 }

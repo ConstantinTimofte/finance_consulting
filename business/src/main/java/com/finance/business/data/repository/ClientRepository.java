@@ -16,4 +16,7 @@ public interface ClientRepository extends JpaRepository<Client, Integer> {
             "where lower(c.firstName) like lower(concat('%', :searchTerm, '%')) " +
             "or lower(c.firstName) like lower(concat('%', :searchTerm, '%')) order by c.id ")
     List<Client> search(@Param("searchTerm") String searchTerm);
+
+    Client findClientByFirstNameAndLastName(@Param("firstName") String firstName, @Param("lastName") String lastName);
+
 }
