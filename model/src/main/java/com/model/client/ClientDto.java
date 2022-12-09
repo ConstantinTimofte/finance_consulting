@@ -16,6 +16,7 @@ public class ClientDto {
     @NotEmpty
     private String lastName;
     private Boolean client;
+    /** If a single payment its expired , return false */
     private Boolean payment;
     private Integer yearSalary;
     @NotEmpty

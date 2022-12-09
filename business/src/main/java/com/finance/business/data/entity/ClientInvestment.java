@@ -3,7 +3,7 @@ package com.finance.business.data.entity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Builder
 @AllArgsConstructor
@@ -34,6 +34,9 @@ public class ClientInvestment {
     private Integer mounth;
 
     @Column(name = "date_activation_invest")
-    private Date activationInvestment;
+    private LocalDate activationInvestment;
+
+    @Column(name = "status_of_payment", nullable = false)
+    private Boolean statusOfPayment;
 
 }

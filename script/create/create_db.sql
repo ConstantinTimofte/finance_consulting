@@ -30,6 +30,7 @@ create table client_investment
     investment integer not null,
     mounth integer ,
     date_activation_invest date ,
+    status_of_payment  boolean not null,
     foreign key (id_client) references client (id),
     foreign key (id_investment) references investment (id)
 )

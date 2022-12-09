@@ -18,7 +18,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  *
  */
 @SpringBootApplication
-@EnableFeignClients(basePackages = {"com.model.client"})
+@EnableFeignClients(basePackages = {"com.model.client","com.model.clientinvest"})
 @EnableEurekaClient
 
 @Theme(value = "clients-ui")

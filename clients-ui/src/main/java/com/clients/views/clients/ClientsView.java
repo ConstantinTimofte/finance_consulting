@@ -164,9 +164,9 @@ public class ClientsView extends VerticalLayout {
         if (clientDto == null) {/*Se non selezioni un contatto*/
             closeEditor();
         } else {
-             if(clientInvestmentForm != null ){/*nel caso la finestra dei investimenti e aperta*/
-                 closeClientInvestmentForm();
-             }
+            if (clientInvestmentForm != null) {/*nel caso la finestra dei investimenti e aperta*/
+                closeClientInvestmentForm();
+            }
             clientForm.setClient(clientDto);/*valorizzo la form con l oggetto attuale*/
             clientForm.setVisible(true);
             addClassName("editing");
@@ -176,6 +176,7 @@ public class ClientsView extends VerticalLayout {
     private void saveInvestment(ClientInvestmentForm.SaveEvent event) {
         try {
             clientService.saveInvestment(event.getClientInvestmentDto());
+            updateList();
             closeClientInvestmentForm();
         } catch (Exception e) {
             System.err.println("Something wrong with the valoriz. of the form"); ///TODO

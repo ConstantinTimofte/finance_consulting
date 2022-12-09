@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(value = "business", path = "/api/client")
+@FeignClient(contextId = "clientContextId",value = "business", path = "/api/client")
 public interface ClientFeign {
 
     @GetMapping("/all")

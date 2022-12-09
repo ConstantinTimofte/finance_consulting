@@ -3,6 +3,7 @@ package com.clients.views;
 import com.clients.navbar.AppNav;
 import com.clients.navbar.AppNavItem;
 import com.clients.views.clients.ClientsView;
+import com.clients.views.clients.clientsinvests.InvestmentOfClientsView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.html.Footer;
@@ -45,6 +46,7 @@ public class MainLayout extends AppLayout {
     private AppNav createNavigation() {
         AppNav nav = new AppNav();
         nav.addItem(new AppNavItem("Clients", ClientsView.class, "la la-user"));
+        nav.addItem(new AppNavItem("Investments", InvestmentOfClientsView.class, "vaadin:open-book"));
         return nav;
     }
 

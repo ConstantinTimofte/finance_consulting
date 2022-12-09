@@ -86,7 +86,6 @@ public class ClientForm extends FormLayout {
         } catch (ValidationException e) {
             e.printStackTrace();
         }
-
     }
 
     /*Viene creato l oggetto */

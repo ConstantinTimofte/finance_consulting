@@ -11,8 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,7 +31,9 @@ public class ClientService {
 
         Client client = clientRepository.findClientByFirstNameAndLastName(clientInvestmentDto.getFirstName(), clientInvestmentDto.getSecondName());
         if (!clientInvestmentDto.getClient()) {
+            /** The contact become client */
             client.setClient(true);
+            client.setPayment(true);
         }
 
 
@@ -47,7 +48,8 @@ public class ClientService {
                 .idInvestment(investment)
                 .investment(clientInvestmentDto.getSumToInvest())
                 .mounth(clientInvestmentDto.getMounth())
-                .activationInvestment(new Date())
+                .activationInvestment(LocalDate.now())
+                .statusOfPayment(true)/** paid investment */
                 .build();
 
         clientInvestmentRepository.save(clientInvestment);
@@ -55,7 +57,7 @@ public class ClientService {
 
 
     public List<String> findClientInvestments(String firstName, String secondName) {
-        List<String> investmentsThatClientCanInvest = new ArrayList<>();
+        List<String> investmentsThatClientCanInvest;
         Client client = clientRepository.findClientByFirstNameAndLastName(firstName, secondName);
         List<ClientInvestment> clientInvestmentList = clientInvestmentRepository.findClientInvestmentsList(client.getId());
 

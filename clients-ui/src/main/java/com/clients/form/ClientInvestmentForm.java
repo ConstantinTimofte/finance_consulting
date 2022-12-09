@@ -127,7 +127,10 @@ public class ClientInvestmentForm extends FormLayout {
         horizontalLayout.setSpacing(true);
         return horizontalLayout;
     }
-
+/*      EURO --->  EQTY
+*                  Leul forte
+*                  101 Invest
+* */
 
     private void changeInvestmentInputByCheck(AbstractField.ComponentValueChangeEvent<RadioButtonGroup<String>, String> check) {
         switch (check.getValue()) {
