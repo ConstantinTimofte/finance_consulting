@@ -39,9 +39,9 @@ public class InvestmentService {
                     .firstName(client.get().getFirstName())
                     .lastName(client.get().getLastName())
                     .investmentName(investment.getName())
-                    .statusOfPayment(clientInvestment.getStatusOfPayment()) //* Status of a singel investment*//*
-                    .expiringDate(expirationDate)
-                    .remainingDays(remainingDays(expirationDate))
+                    .statusOfPayment(clientInvestment.getStatusOfPayment())
+                    .expiringDate(formatLocalDate("dd-MM-YYYY",expirationDate))
+                    .remainingDays(remainingDays(expirationDate, LocalDate.now()))
                     .mounth(clientInvestment.getMounth())
                     .sum(clientInvestment.getInvestment())
                     .build();
@@ -56,32 +56,55 @@ public class InvestmentService {
     /**
      * Remaining days when the status of payment change
      */
-    private LocalDate expirationDate(LocalDate startInvestment, Integer mounthOfPay) {
+    public LocalDate expirationDate(LocalDate startInvestment, Integer mounthOfPay) {
         LocalDate date = startInvestment.plusMonths(mounthOfPay);
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        date.format(dateTimeFormatter);
         return date;
     }
 
+    private String formatLocalDate(String pattern, LocalDate date) {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(pattern);
+        String localDateString = date.format(dateTimeFormatter);
+        return localDateString;
+    }
 
     /**
      * Testing -  date_activation =  current date + 2 / current mount - 1 / year
      */
-    private static Integer remainingDays(LocalDate expiringDate) {
-        int expiringDay = expiringDate.getDayOfMonth();
-        int dayNow = LocalDate.now().getDayOfMonth();
-        if (LocalDate.now().getMonthValue() == expiringDate.getMonthValue()) { /*stesso mese */
 
-            if ((expiringDay > dayNow) && (expiringDay - dayNow <= 7)) {/*Ultimi 7 giorni di appaiono*/
-                return expiringDay - dayNow;
-            } else if (expiringDay < dayNow) {
+    public static Integer remainingDays(LocalDate expiringDate, LocalDate current) {
+        if (expiringDate.getYear() > current.getYear()) {
+            /*Ancora non scaduto*/
+            System.out.println("Ancora non scaduto");
+            return null;/*Non scaduto , e giorni non calcolabili*/
+        } else if (expiringDate.getYear() < current.getYear()) {
+            /*scaduto*/
+            System.out.println("scaduto");
+            return 0;
+
+        } else if (expiringDate.getYear() == current.getYear()) {
+
+            if (expiringDate.getMonthValue() > current.getMonthValue()) {
+                /*Ancora non scaduto*/
+                return null;/*Non scaduto , e giorni non calcolabili*/
+
+            } else if (current.getMonthValue() > expiringDate.getMonthValue()) {
+                /*scaduto*/
+                System.out.println("scaduto");
                 return 0;
-            } else {
-                return null;
+
+            } else if (current.getMonthValue() == expiringDate.getMonthValue()) {
+                if (expiringDate.getDayOfMonth() > current.getDayOfMonth()) {
+                    /*Ancora non scaduto - il tempo rimanente viene calcolato solo se e nello stesso mese*/
+                    return expiringDate.getDayOfMonth() - current.getDayOfMonth();
+                }
+                System.out.println("scaduto");
+                return 0;
             }
         }
-        return null;
+        return null;/*Non scaduto , e giorni non calcolabili*/
     }
+
+
 }
 
 

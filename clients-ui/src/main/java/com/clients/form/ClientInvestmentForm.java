@@ -9,6 +9,7 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.radiobutton.RadioGroupVariant;
 import com.vaadin.flow.component.textfield.IntegerField;
@@ -72,7 +73,6 @@ public class ClientInvestmentForm extends FormLayout {
     private Component setInvestmentLayout() {
         investmentType.setLabel("Investment");
         investmentType.setItems("NEW", "EXISTING");
-        investmentType.setValue("NEW");
 
         setInvestmentStyle();
         newInverstment.addValueChangeListener(event -> clientInvestmentDto.setInvestmentName(event.getValue()));
@@ -87,7 +87,6 @@ public class ClientInvestmentForm extends FormLayout {
 
         return horizontalLayout;
     }
-
 
     private Component setYearAndMounthLayout() {
         List<Integer> maxMounth = new ArrayList<>();
@@ -106,13 +105,11 @@ public class ClientInvestmentForm extends FormLayout {
     }
 
     private Component setExpensesAndSavingLayout() {
-        expenses.setWidth("15em");
-        saving.setWidth("15em");
-
-        HorizontalLayout horizontalLayout = new HorizontalLayout(expenses, saving);
-        horizontalLayout.setSpacing(true);
-        horizontalLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);/**uno da un lato - l atro dall opposto*/
-        return horizontalLayout;
+        expenses.setWidth("20em");
+        saving.setWidth("20em");
+        VerticalLayout verticalLayout = new VerticalLayout(expenses, saving);
+        verticalLayout.setSpacing(false);
+        return verticalLayout;
     }
 
     private Component setSumInvestmentLayout() {
@@ -127,10 +124,10 @@ public class ClientInvestmentForm extends FormLayout {
         horizontalLayout.setSpacing(true);
         return horizontalLayout;
     }
-/*      EURO --->  EQTY
-*                  Leul forte
-*                  101 Invest
-* */
+    /*      EURO --->  EQTY
+     *                  Leul forte
+     *                  101 Invest
+     * */
 
     private void changeInvestmentInputByCheck(AbstractField.ComponentValueChangeEvent<RadioButtonGroup<String>, String> check) {
         switch (check.getValue()) {
@@ -155,6 +152,7 @@ public class ClientInvestmentForm extends FormLayout {
         HorizontalLayout buttonsLayout = new HorizontalLayout(cancel, save);
         buttonsLayout.setSpacing(true);
         buttonsLayout.setFlexGrow(1, save);/*ingrandesce il bottone per occupare tutto il width*/
+
         return buttonsLayout;
     }
 
@@ -189,6 +187,7 @@ public class ClientInvestmentForm extends FormLayout {
         if (clientInvestmentDto != null) {
             List<String> possibleInvestment = clientService.getPossibleInvestments(clientInvestmentDto.getFirstName(), clientInvestmentDto.getSecondName());
             investmentList.setItems(possibleInvestment);
+            setExistingInvestmentsOrDefault(possibleInvestment.size() > 0,  possibleInvestment);
 
             firstName.setValue(clientInvestmentDto.getFirstName());
             firstName.setReadOnly(true);
@@ -198,6 +197,15 @@ public class ClientInvestmentForm extends FormLayout {
 
             yearSalary.setValue(clientInvestmentDto.getYearSalary());
             yearSalary.setReadOnly(true);
+        }
+    }
+
+    private void setExistingInvestmentsOrDefault(boolean set,  List<String> possibleInvestment) {
+        if (set) {
+            investmentType.setValue("EXISTING");
+            investmentList.setValue(possibleInvestment.get(0));
+        } else {
+            investmentType.setValue("NEW");
         }
     }
 

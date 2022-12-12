@@ -6,12 +6,15 @@ import com.finance.business.data.entity.Investment;
 import com.finance.business.data.repository.ClientInvestmentRepository;
 import com.finance.business.data.repository.ClientRepository;
 import com.finance.business.data.repository.InvestmentRepository;
+import com.model.client.ClientDto;
 import com.model.clientinvest.ClientInvestmentDto;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,6 +27,8 @@ public class ClientService {
     private final ClientRepository clientRepository;
     private final InvestmentRepository investmentRepository;
     private final ClientInvestmentRepository clientInvestmentRepository;
+    private final ModelMapper modelMapper;
+    private final InvestmentService investmentService;
 
 
     @Transactional
@@ -83,5 +88,36 @@ public class ClientService {
         return investmentsThatClientCanInvest;
     }
 
-}
 
+    public void findAllClients(Client client, List<ClientDto> clientEntityList) {
+        if (client.getPayment() != null) {/*SE CLIENTE*/
+            List<ClientInvestment> getClientInvestments = clientInvestmentRepository.getClientInvestments(client.getId());
+
+            for (ClientInvestment clientInvestment : getClientInvestments) {
+                if (clientInvestment.getStatusOfPayment()) {
+                    LocalDate expirationDate = investmentService.expirationDate(clientInvestment.getActivationInvestment(), clientInvestment.getMounth());
+                    setStatusOfPayment(investmentService.remainingDays(expirationDate, LocalDate.now()), clientInvestment, client);
+                }
+            }
+
+        }
+        clientEntityList.add(modelMapper.map(client, ClientDto.class));
+    }
+
+    @Transactional
+    Boolean setStatusOfPayment(Integer remainingDays, ClientInvestment clientInvestment, Client client) {
+        if (remainingDays == null) {
+            return true;
+        } else if (remainingDays == 0) {
+            /** UPDATE STATUS */
+            clientInvestment.setStatusOfPayment(false);
+            clientInvestmentRepository.save(clientInvestment);
+
+            client.setPayment(false);
+            clientRepository.save(client);
+            return false;
+        }
+        /*IL DEFAULT E SEMPRE TRUE*/
+        return true;
+    }
+}

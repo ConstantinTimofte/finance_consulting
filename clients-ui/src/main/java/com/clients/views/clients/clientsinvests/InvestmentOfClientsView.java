@@ -21,7 +21,7 @@ import com.vaadin.flow.router.Route;
  *
  * */
 @PageTitle("Investments")
-@Route(value = "/clientsinvest", layout = MainLayout.class)
+@Route(value = "investments", layout = MainLayout.class)
 public class InvestmentOfClientsView extends VerticalLayout {
 
     private ClientsInvestmentService clientsInvestmentService;
@@ -58,7 +58,7 @@ public class InvestmentOfClientsView extends VerticalLayout {
     }
 
     private Icon createStatusIcon(InvestmentsOfClientsDto investmentsOfClientsDto) {
-        Icon icon = new Icon();
+        Icon icon;
         if (investmentsOfClientsDto.getStatusOfPayment()) {
             icon = VaadinIcon.CHECK.create();
             icon.getElement().getThemeList().add("badge success");

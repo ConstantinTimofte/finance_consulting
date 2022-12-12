@@ -10,6 +10,7 @@ import com.vaadin.flow.component.html.Footer;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Header;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
@@ -46,7 +47,7 @@ public class MainLayout extends AppLayout {
     private AppNav createNavigation() {
         AppNav nav = new AppNav();
         nav.addItem(new AppNavItem("Clients", ClientsView.class, "la la-user"));
-        nav.addItem(new AppNavItem("Investments", InvestmentOfClientsView.class, "vaadin:open-book"));
+        nav.addItem(new AppNavItem("Investments", InvestmentOfClientsView.class, "la la-chess-knight"));//  lab la-cloudversify    chess-knight-solid
         return nav;
     }
 
