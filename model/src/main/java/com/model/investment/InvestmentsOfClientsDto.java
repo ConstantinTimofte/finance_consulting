@@ -18,4 +18,6 @@ public class InvestmentsOfClientsDto {
     private Integer remainingDays;
     private Integer mounth;/*Ogni quanto deve investire*/
     private Integer sum;
+
+
 }

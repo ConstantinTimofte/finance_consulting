@@ -1,6 +1,8 @@
 package com.clients.views.clients.clientsinvests;
 
 
+import com.clients.form.ClientInvestmentForm;
+import com.clients.form.InvestmentsOfClientsForm;
 import com.clients.service.ClientsInvestmentService;
 import com.clients.views.MainLayout;
 import com.model.investment.InvestmentsOfClientsDto;
@@ -11,15 +13,14 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 
-/** TODO ICONCINA MENU
- *
- *
- *
- * */
+/**
+ * TODO ICONCINA MENU
+ */
 @PageTitle("Investments")
 @Route(value = "investments", layout = MainLayout.class)
 public class InvestmentOfClientsView extends VerticalLayout {
@@ -41,12 +42,25 @@ public class InvestmentOfClientsView extends VerticalLayout {
 
     private void configureGrid() {
         grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
-        grid.setSizeFull();//luncghezza grid
+        grid.setSizeFull();//lunghezza grid
         grid.setSizeFull();
 
+        //  grid.addColumn(Person::getFullName).setHeader("Name");
+
+        /*  grid.addColumn(
+                new ComponentRenderer<>(Button::new, (button, person) -> {
+                    button.addThemeVariants(ButtonVariant.LUMO_ICON,
+                            ButtonVariant.LUMO_ERROR,
+                            ButtonVariant.LUMO_TERTIARY);
+                    button.addClickListener(e -> this.removeInvitation(person));
+                    button.setIcon(new Icon(VaadinIcon.TRASH));
+                })).setHeader("Manage");
+        * */
         grid.setColumns("firstName", "lastName", "investmentName", "expiringDate", "remainingDays");
 
-        grid.addComponentColumn(investmentsOfClientsDto -> createStatusIcon(investmentsOfClientsDto)).setHeader("Status of Payment");;
+        grid.addComponentColumn(investmentsOfClientsDto -> createStatusIcon(investmentsOfClientsDto)).setHeader("Status of Payment");
+
+        grid.setItemDetailsRenderer(createPersonDetailsRenderer());
     }
 
     private Component getContent() {
@@ -68,5 +82,12 @@ public class InvestmentOfClientsView extends VerticalLayout {
         }
         icon.getStyle().set("padding", "var(--lumo-space-xs");
         return icon;
+    }
+
+    /*private static ComponentRenderer<InvestmentsOfClientsForm, InvestmentsOfClientsDto> createPersonDetailsRenderer() {
+        return new ComponentRenderer<>(InvestmentsOfClientsForm::new, InvestmentsOfClientsForm::setDto);
+    }*/
+    private static ComponentRenderer<InvestmentsOfClientsForm, InvestmentsOfClientsDto> createPersonDetailsRenderer() {
+        return new ComponentRenderer<>(InvestmentsOfClientsForm::new, InvestmentsOfClientsForm::setDto);
     }
 }

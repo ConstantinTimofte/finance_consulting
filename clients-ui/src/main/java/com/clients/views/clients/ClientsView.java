@@ -106,7 +106,7 @@ public class ClientsView extends VerticalLayout {
         filterText.addValueChangeListener(e -> updateList());/*ad ogni cambiamento chiama il metodo*/
         filterText.setWidth("45em");
 
-        Button clientButton = new Button("Add");
+        Button clientButton = new Button("New client", VaadinIcon.PLUS.create());
         clientButton.addClickListener(event -> saveClient());//Reindirizzamento sulla form
         clientButton.setAutofocus(true);
 

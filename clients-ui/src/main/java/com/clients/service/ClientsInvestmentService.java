@@ -17,4 +17,12 @@ public class ClientsInvestmentService {
     public List<InvestmentsOfClientsDto> getAll() {
         return clientInvestmentsFeign.getAll();
     }
+
+    public void saveChangedInvestment(InvestmentsOfClientsDto investmentsOfClientsDto) {
+        System.out.println(investmentsOfClientsDto);
+    }
+
+    public void deleteInvestment(InvestmentsOfClientsDto investmentsOfClientsDto) {
+        System.out.println(investmentsOfClientsDto);
+    }
 }
