@@ -83,7 +83,7 @@ public class InvestmentsOfClientsForm extends FormLayout {
         try {
             clientsInvestmentService.deleteInvestment(event.getInvestmentsOfClientsDto());
             this.setVisible(false);
-            updateList();
+            grid.setItems(clientsInvestmentService.getAll());
         } catch (Exception e) {
             System.err.println("Something wrong with the valoriz. of the form"); ///TODO
         }
@@ -94,6 +94,7 @@ public class InvestmentsOfClientsForm extends FormLayout {
         this.setVisible(false);
         updateList();
     }
+
 
     /** !!! Per velocizzare  ---una volta effettuata l operazione SALVA/CANCELLA/RESET
      * - il dato cambiato non viene immediatamente recuperato dal database e messo nella Grid , sarebbe un operazione in piu ...

@@ -8,6 +8,7 @@ import com.finance.business.data.repository.ClientRepository;
 import com.finance.business.data.repository.InvestmentRepository;
 import com.model.investment.InvestmentsOfClientsDto;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,8 +28,7 @@ public class InvestmentService {
 
     public List<InvestmentsOfClientsDto> getAllInvestmentsOfClients() {
         List<InvestmentsOfClientsDto> allInvestmentsOfClients = new ArrayList<>();
-
-        List<ClientInvestment> clientInvestmentList = clientInvestmentRepository.findAll();
+        List<ClientInvestment> clientInvestmentList = clientInvestmentRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
 
         for (ClientInvestment clientInvestment : clientInvestmentList) {
             Optional<Client> client = clientRepository.findById(clientInvestment.getIdClient().getId());
@@ -61,7 +61,6 @@ public class InvestmentService {
         /** Se cambia il mese */
         if (investmentsOfClientsDto.getMounth() != clientInvestment.get().getMounth()) {
             clientInvestment.get().setMounth(investmentsOfClientsDto.getMounth());
-            clientInvestment.get().setActivationInvestment(LocalDate.now());
         }
         clientInvestmentRepository.save(clientInvestment.get());
     }
@@ -71,10 +70,16 @@ public class InvestmentService {
         Client client = clientRepository.findClientByFirstNameAndLastName(investmentsOfClientsDto.getFirstName(), investmentsOfClientsDto.getLastName());
 
         ClientInvestment currentClientInvestment = clientInvestmentRepository.findById(investmentsOfClientsDto.getId()).get();
-         clientInvestmentRepository.delete(currentClientInvestment);
+        clientInvestmentRepository.delete(currentClientInvestment);
 
-        long countNonPayd = clientInvestmentRepository.findClientInvestmentsListWithPaymentStatus(client.getId(), false).size();
-        client.setPayment(countNonPayd > 0 ? false : true);
+        List<ClientInvestment> clientInvestmentList = clientInvestmentRepository.getClientInvestments(client.getId());
+        if (clientInvestmentList.isEmpty()) {
+            client.setClient(false);
+            client.setPayment(null);
+        } else {
+            long countNonPayd = clientInvestmentRepository.findClientInvestmentsListWithPaymentStatus(client.getId(), false).size();
+            client.setPayment(countNonPayd > 0 ? false : true);
+        }
         clientRepository.save(client);
     }
 
