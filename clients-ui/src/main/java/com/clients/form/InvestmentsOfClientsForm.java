@@ -4,7 +4,6 @@ import com.clients.service.ClientsInvestmentService;
 import com.model.investment.InvestmentsOfClientsDto;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -12,6 +11,7 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.IntegerField;
+import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.shared.Registration;
 
 
@@ -59,7 +59,6 @@ public class InvestmentsOfClientsForm extends FormLayout {
     }
 
 
-
     private void validateAndSave(InvestmentsOfClientsDto investmentsOfClientsDto) {
         fireEvent(new SaveEvent(this, investmentsOfClientsDto));
     }
@@ -89,12 +88,20 @@ public class InvestmentsOfClientsForm extends FormLayout {
             System.err.println("Something wrong with the valoriz. of the form"); ///TODO
         }
     }
+
     private void resetInitialSumValue() {
         sumToInvest.setValue(this.initialValue);
+        this.setVisible(false);
+        updateList();
     }
 
+    /** !!! Per velocizzare  ---una volta effettuata l operazione SALVA/CANCELLA/RESET
+     * - il dato cambiato non viene immediatamente recuperato dal database e messo nella Grid , sarebbe un operazione in piu ...
+     * L oggetto nella grid (che contiene una lista di quei oggetti ) viene modificato e lasciato */
     private void updateList() {
-        grid.setItems(clientsInvestmentService.getAll());
+        ListDataProvider<InvestmentsOfClientsDto> dataProvider = (ListDataProvider<InvestmentsOfClientsDto>) grid.getDataProvider();//Recupero oggetti gia esistenti della grid
+// Imposta il DataProvider come fonte di dati per la griglia
+        grid.setItems(dataProvider);
     }
 
     public static abstract class InvestmentsOfClientsFormEvent extends ComponentEvent<InvestmentsOfClientsForm> {
