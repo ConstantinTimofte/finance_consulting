@@ -24,10 +24,18 @@ public interface ClientInvestmentRepository extends JpaRepository<ClientInvestme
     ClientInvestment findClientInvestmentsList(@Param("idClient") Integer idClient, @Param("idInvestment") Integer idInvestment);
 
 
-    @Query("select  c from ClientInvestment AS c  " +
+    @Query("select c from ClientInvestment AS c  " +
             " JOIN FETCH c.idClient  " +
             " WHERE  c.idClient.id = :idClient ")
     List<ClientInvestment> findClientInvestmentsList(@Param("idClient") Integer idClient);
+
+
+      @Query("select c from ClientInvestment  as c " +
+                " LEFT JOIN FETCH c.idClient " +
+                " WHERE  c.idClient.id = :idClient and c.statusOfPayment = :statusOfPayment ")
+      List<ClientInvestment> findClientInvestmentsListWithPaymentStatus(@Param("idClient") Integer idClient,
+                                                    @Param("statusOfPayment") Boolean statusOfPayment);
+
 
     @Query(value = "select c  from ClientInvestment  as c " +
             " JOIN FETCH c.idClient WHERE  c.idClient.id = :idClient  " +

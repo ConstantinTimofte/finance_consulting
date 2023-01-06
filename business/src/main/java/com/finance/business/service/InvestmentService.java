@@ -9,6 +9,7 @@ import com.finance.business.data.repository.InvestmentRepository;
 import com.model.investment.InvestmentsOfClientsDto;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -36,11 +37,12 @@ public class InvestmentService {
             LocalDate expirationDate = expirationDate(clientInvestment.getActivationInvestment(), clientInvestment.getMounth());
 
             InvestmentsOfClientsDto investmentsOfClientsDto = InvestmentsOfClientsDto.builder()
+                    .id(clientInvestment.getId())
                     .firstName(client.get().getFirstName())
                     .lastName(client.get().getLastName())
                     .investmentName(investment.getName())
                     .statusOfPayment(clientInvestment.getStatusOfPayment())
-                    .expiringDate(formatLocalDate("dd-MM-YYYY",expirationDate))
+                    .expiringDate(formatLocalDate("dd-MM-YYYY", expirationDate))
                     .remainingDays(remainingDays(expirationDate, LocalDate.now()))
                     .mounth(clientInvestment.getMounth())
                     .sum(clientInvestment.getInvestment())
@@ -50,6 +52,30 @@ public class InvestmentService {
             allInvestmentsOfClients.add(investmentsOfClientsDto);
         }
         return allInvestmentsOfClients;
+    }
+
+    public void modifySavedInvestment(InvestmentsOfClientsDto investmentsOfClientsDto) {
+        Optional<ClientInvestment> clientInvestment = clientInvestmentRepository.findById(investmentsOfClientsDto.getId());
+        clientInvestment.get().setInvestment(investmentsOfClientsDto.getSum());
+
+        /** Se cambia il mese */
+        if (investmentsOfClientsDto.getMounth() != clientInvestment.get().getMounth()) {
+            clientInvestment.get().setMounth(investmentsOfClientsDto.getMounth());
+            clientInvestment.get().setActivationInvestment(LocalDate.now());
+        }
+        clientInvestmentRepository.save(clientInvestment.get());
+    }
+
+    @Transactional
+    public void deletetSavedInvestment(InvestmentsOfClientsDto investmentsOfClientsDto) {
+        Client client = clientRepository.findClientByFirstNameAndLastName(investmentsOfClientsDto.getFirstName(), investmentsOfClientsDto.getLastName());
+
+        ClientInvestment currentClientInvestment = clientInvestmentRepository.findById(investmentsOfClientsDto.getId()).get();
+         clientInvestmentRepository.delete(currentClientInvestment);
+
+        long countNonPayd = clientInvestmentRepository.findClientInvestmentsListWithPaymentStatus(client.getId(), false).size();
+        client.setPayment(countNonPayd > 0 ? false : true);
+        clientRepository.save(client);
     }
 
 
@@ -104,6 +130,21 @@ public class InvestmentService {
         return null;/*Non scaduto , e giorni non calcolabili*/
     }
 
+    public Integer remainingDays(LocalDate expiringDate, LocalDate current, int CASO2) {
+        Integer result;
+
+        if (expiringDate.getYear() > current.getYear()) {
+            result = null;
+        } else if (expiringDate.getYear() < current.getYear() ||
+                (expiringDate.getYear() == current.getYear() && expiringDate.getMonthValue() < current.getMonthValue()) ||
+                (expiringDate.getYear() == current.getYear() && expiringDate.getMonthValue() == current.getMonthValue() && expiringDate.getDayOfMonth() < current.getDayOfMonth())) {
+            result = 0;
+        } else {
+            result = expiringDate.getDayOfMonth() - current.getDayOfMonth();
+        }
+
+        return result;
+    }
 
 }
 

@@ -1,7 +1,5 @@
 package com.clients.views.clients.clientsinvests;
 
-
-import com.clients.form.ClientInvestmentForm;
 import com.clients.form.InvestmentsOfClientsForm;
 import com.clients.service.ClientsInvestmentService;
 import com.clients.views.MainLayout;
@@ -84,10 +82,7 @@ public class InvestmentOfClientsView extends VerticalLayout {
         return icon;
     }
 
-    /*private static ComponentRenderer<InvestmentsOfClientsForm, InvestmentsOfClientsDto> createPersonDetailsRenderer() {
-        return new ComponentRenderer<>(InvestmentsOfClientsForm::new, InvestmentsOfClientsForm::setDto);
-    }*/
-    private static ComponentRenderer<InvestmentsOfClientsForm, InvestmentsOfClientsDto> createPersonDetailsRenderer() {
-        return new ComponentRenderer<>(InvestmentsOfClientsForm::new, InvestmentsOfClientsForm::setDto);
+    private ComponentRenderer<InvestmentsOfClientsForm, InvestmentsOfClientsDto> createPersonDetailsRenderer() {
+        return new ComponentRenderer<>(investimentoDto -> new InvestmentsOfClientsForm(investimentoDto, clientsInvestmentService,grid));
     }
 }

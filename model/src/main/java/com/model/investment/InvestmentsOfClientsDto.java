@@ -9,7 +9,7 @@ import lombok.*;
 @Data
 @Builder
 public class InvestmentsOfClientsDto {
-
+    private Integer id;
     private String firstName;
     private String lastName;
     private String investmentName;

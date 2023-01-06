@@ -19,10 +19,10 @@ public class ClientsInvestmentService {
     }
 
     public void saveChangedInvestment(InvestmentsOfClientsDto investmentsOfClientsDto) {
-        System.out.println(investmentsOfClientsDto);
+        clientInvestmentsFeign.modifySavedInvestment(investmentsOfClientsDto);
     }
 
     public void deleteInvestment(InvestmentsOfClientsDto investmentsOfClientsDto) {
-        System.out.println(investmentsOfClientsDto);
+        clientInvestmentsFeign.deletetSavedInvestment(investmentsOfClientsDto);
     }
 }
