@@ -25,4 +25,8 @@ public class ClientsInvestmentService {
     public void deleteInvestment(InvestmentsOfClientsDto investmentsOfClientsDto) {
         clientInvestmentsFeign.deletetSavedInvestment(investmentsOfClientsDto);
     }
+
+    public void activateExpiredInvestment(InvestmentsOfClientsDto investmentsOfClientsDto){
+        clientInvestmentsFeign.activateexpiredinvestment(investmentsOfClientsDto);
+    }
 }

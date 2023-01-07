@@ -5,6 +5,8 @@ import com.clients.service.ClientsInvestmentService;
 import com.clients.views.MainLayout;
 import com.model.investment.InvestmentsOfClientsDto;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.icon.Icon;
@@ -59,6 +61,21 @@ public class InvestmentOfClientsView extends VerticalLayout {
         grid.addComponentColumn(investmentsOfClientsDto -> createStatusIcon(investmentsOfClientsDto)).setHeader("Status of Payment");
 
         grid.setItemDetailsRenderer(createPersonDetailsRenderer());
+
+        grid.addComponentColumn(investmentsOfClientsDto -> {
+            Button button = new Button("Activate");
+            if (investmentsOfClientsDto.getStatusOfPayment()) {
+                button.setVisible(false);
+            } else {
+                button.setAutofocus(true);
+                button.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
+                button.addClickListener(event -> {
+                    clientsInvestmentService.activateExpiredInvestment(investmentsOfClientsDto);
+                    updateList();
+                });
+            }
+            return button;
+        }).setHeader("Action");
     }
 
     private Component getContent() {
@@ -83,6 +100,6 @@ public class InvestmentOfClientsView extends VerticalLayout {
     }
 
     private ComponentRenderer<InvestmentsOfClientsForm, InvestmentsOfClientsDto> createPersonDetailsRenderer() {
-        return new ComponentRenderer<>(investimentoDto -> new InvestmentsOfClientsForm(investimentoDto, clientsInvestmentService,grid));
+        return new ComponentRenderer<>(investimentoDto -> new InvestmentsOfClientsForm(investimentoDto, clientsInvestmentService, grid));
     }
 }

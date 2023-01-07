@@ -35,4 +35,9 @@ public class InvestController {
     public void deletetSavedInvestment(@RequestBody InvestmentsOfClientsDto investmentsOfClientsDto) {
         investmentService.deletetSavedInvestment(investmentsOfClientsDto);
     }
+
+    @RequestMapping(value = "/activateexpiredinvestment",method = RequestMethod.POST)
+    public void activateexpiredinvestment(@RequestBody InvestmentsOfClientsDto investmentsOfClientsDto){
+        investmentService.activateExpiredInvestment(investmentsOfClientsDto);
+    }
 }

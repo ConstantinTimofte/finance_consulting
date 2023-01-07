@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -81,6 +82,15 @@ public class InvestmentService {
             client.setPayment(countNonPayd > 0 ? false : true);
         }
         clientRepository.save(client);
+    }
+
+    public void activateExpiredInvestment(InvestmentsOfClientsDto investmentsOfClientsDto) {
+        ClientInvestment currentClientInvestment = clientInvestmentRepository.findById(investmentsOfClientsDto.getId()).get();
+
+        currentClientInvestment.setStatusOfPayment(true);
+        currentClientInvestment.setActivationInvestment(LocalDate.now());
+
+        clientInvestmentRepository.save(currentClientInvestment);
     }
 
 

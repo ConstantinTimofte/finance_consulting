@@ -21,4 +21,7 @@ public interface ClientInvestmentsFeign {
 
     @DeleteMapping("/deletetsavedinvestment")
     void deletetSavedInvestment(@RequestBody InvestmentsOfClientsDto investmentsOfClientsDto);
+
+    @PostMapping("/activateexpiredinvestment")
+    void activateexpiredinvestment(@RequestBody InvestmentsOfClientsDto investmentsOfClientsDto);
 }

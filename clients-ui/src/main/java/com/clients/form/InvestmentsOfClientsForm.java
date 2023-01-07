@@ -44,14 +44,14 @@ public class InvestmentsOfClientsForm extends FormLayout {
     public void setDto(InvestmentsOfClientsDto investmentsOfClientsDto) {
         mounth.setItems(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
         mounth.setValue(investmentsOfClientsDto.getMounth());
-        sumToInvest.setValue(investmentsOfClientsDto.getSum());
+        mounth.addValueChangeListener(mounthValueInput -> investmentsOfClientsDto.setMounth(mounthValueInput.getValue()));
 
+        sumToInvest.setValue(investmentsOfClientsDto.getSum());
         sumToInvest.addValueChangeListener(value -> {
             investmentsOfClientsDto.setSum(value.getValue());
         });
 
         reset.addClickListener(event -> resetInitialSumValue());
-
         save.addClickListener(event -> validateAndSave(investmentsOfClientsDto));
         delete.addClickListener(event -> fireEvent(new InvestmentsOfClientsForm.DeleteEvent(this, investmentsOfClientsDto)));
 
@@ -73,7 +73,7 @@ public class InvestmentsOfClientsForm extends FormLayout {
         try {
             clientsInvestmentService.saveChangedInvestment(event.getInvestmentsOfClientsDto());
             this.setVisible(false);
-            updateList();
+            grid.setItems(clientsInvestmentService.getAll());
         } catch (Exception e) {
             System.err.println("Something wrong with the valoriz. of the form"); ///TODO
         }
