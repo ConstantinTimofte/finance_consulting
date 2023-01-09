@@ -6,13 +6,14 @@ import com.finance.business.data.entity.Investment;
 import com.finance.business.data.repository.ClientInvestmentRepository;
 import com.finance.business.data.repository.ClientRepository;
 import com.finance.business.data.repository.InvestmentRepository;
+import com.model.clientinvest.SearchInvestmentDto;
 import com.model.investment.InvestmentsOfClientsDto;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
+import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -31,27 +32,7 @@ public class InvestmentService {
         List<InvestmentsOfClientsDto> allInvestmentsOfClients = new ArrayList<>();
         List<ClientInvestment> clientInvestmentList = clientInvestmentRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
 
-        for (ClientInvestment clientInvestment : clientInvestmentList) {
-            Optional<Client> client = clientRepository.findById(clientInvestment.getIdClient().getId());
-            Investment investment = investmentRepository.getById(clientInvestment.getIdInvestment().getId());
-
-            LocalDate expirationDate = expirationDate(clientInvestment.getActivationInvestment(), clientInvestment.getMounth());
-
-            InvestmentsOfClientsDto investmentsOfClientsDto = InvestmentsOfClientsDto.builder()
-                    .id(clientInvestment.getId())
-                    .firstName(client.get().getFirstName())
-                    .lastName(client.get().getLastName())
-                    .investmentName(investment.getName())
-                    .statusOfPayment(clientInvestment.getStatusOfPayment())
-                    .expiringDate(formatLocalDate("dd-MM-YYYY", expirationDate))
-                    .remainingDays(remainingDays(expirationDate, LocalDate.now()))
-                    .mounth(clientInvestment.getMounth())
-                    .sum(clientInvestment.getInvestment())
-                    .build();
-
-
-            allInvestmentsOfClients.add(investmentsOfClientsDto);
-        }
+        createInvestmentsOfClientsDto(allInvestmentsOfClients, clientInvestmentList);
         return allInvestmentsOfClients;
     }
 
@@ -86,13 +67,81 @@ public class InvestmentService {
 
     public void activateExpiredInvestment(InvestmentsOfClientsDto investmentsOfClientsDto) {
         ClientInvestment currentClientInvestment = clientInvestmentRepository.findById(investmentsOfClientsDto.getId()).get();
-
         currentClientInvestment.setStatusOfPayment(true);
         currentClientInvestment.setActivationInvestment(LocalDate.now());
 
         clientInvestmentRepository.save(currentClientInvestment);
     }
 
+    public List<InvestmentsOfClientsDto> searchInvestment(SearchInvestmentDto searchInvestmentDto) throws Exception {
+        List<InvestmentsOfClientsDto> investmentsOfClientsDtoList = new ArrayList<>();
+
+        if (areAllParamsNull(searchInvestmentDto)) {
+            investmentsOfClientsDtoList = getAllInvestmentsOfClients();
+        } else {
+            Boolean statusPayment = null;
+            if ("Payd".equals(searchInvestmentDto.getStatus())) {
+                statusPayment = true;
+            } else if ("Expired".equals(searchInvestmentDto.getStatus())) {
+                statusPayment = false;
+            }
+
+            List<ClientInvestment> investmentsOfClientsList = clientInvestmentRepository.findClientInvestmentByIdClientAndIdInvestmentAndStatusOfPayment(searchInvestmentDto.getFirstName(),
+                    searchInvestmentDto.getLastName(),searchInvestmentDto.getInvestmentName(),statusPayment);
+
+            createInvestmentsOfClientsDto(investmentsOfClientsDtoList, investmentsOfClientsList);
+        }
+
+        return investmentsOfClientsDtoList;
+    }
+
+    private void createInvestmentsOfClientsDto(List<InvestmentsOfClientsDto> investmentsOfClientsDtoList, List<ClientInvestment> investmentsOfClientsList) {
+        for (ClientInvestment clientInvestment : investmentsOfClientsList) {
+            Optional<Client> client = clientRepository.findById(clientInvestment.getIdClient().getId());
+            Investment investment = investmentRepository.getById(clientInvestment.getIdInvestment().getId());
+            LocalDate expirationDate = expirationDate(clientInvestment.getActivationInvestment(), clientInvestment.getMounth());
+
+            InvestmentsOfClientsDto investmentsOfClientsDto = InvestmentsOfClientsDto.builder()
+                    .id(clientInvestment.getId())
+                    .firstName(client.get().getFirstName())
+                    .lastName(client.get().getLastName())
+                    .investmentName(investment.getName())
+                    .statusOfPayment(clientInvestment.getStatusOfPayment())
+                    .expiringDate(formatLocalDate("dd-MM-YYYY", expirationDate))
+                    .remainingDays(remainingDays(expirationDate, LocalDate.now()))
+                    .mounth(clientInvestment.getMounth())
+                    .sum(clientInvestment.getInvestment())
+                    .build();
+
+
+            investmentsOfClientsDtoList.add(investmentsOfClientsDto);
+        }
+    }
+
+
+    /**
+     * Verifica se tutti i parametri dell'oggetto SearchInvestmentDto sono null.
+     *
+     * @param object L'oggetto SearchInvestmentDto da controllare.
+     * @return true se tutti i parametri dell'oggetto sono null, false altrimenti.
+     */
+    private boolean areAllParamsNull(SearchInvestmentDto object) throws Exception {
+        // Ottieni tutti i campi dell'oggetto
+        Field[] fields = object.getClass().getDeclaredFields();
+        // Scorri i campi uno per uno
+        for (Field field : fields) {
+            field.setAccessible(true);// Il campo e dichiarato private, cosi lo rendi accessibile
+            try {
+                // Controlla se il valore del campo è null
+                if (field.get(object) != null) {
+                    return false;
+                }
+            } catch (IllegalAccessException e) {
+                throw new Exception();
+            }
+        }
+        return true;
+    }
 
     /**
      * Remaining days when the status of payment change

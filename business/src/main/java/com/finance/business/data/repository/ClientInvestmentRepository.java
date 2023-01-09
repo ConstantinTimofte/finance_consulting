@@ -30,11 +30,11 @@ public interface ClientInvestmentRepository extends JpaRepository<ClientInvestme
     List<ClientInvestment> findClientInvestmentsList(@Param("idClient") Integer idClient);
 
 
-      @Query("select c from ClientInvestment  as c " +
-                " LEFT JOIN FETCH c.idClient " +
-                " WHERE  c.idClient.id = :idClient and c.statusOfPayment = :statusOfPayment ")
-      List<ClientInvestment> findClientInvestmentsListWithPaymentStatus(@Param("idClient") Integer idClient,
-                                                    @Param("statusOfPayment") Boolean statusOfPayment);
+    @Query("select c from ClientInvestment  as c " +
+            " LEFT JOIN FETCH c.idClient " +
+            " WHERE  c.idClient.id = :idClient and c.statusOfPayment = :statusOfPayment ")
+    List<ClientInvestment> findClientInvestmentsListWithPaymentStatus(@Param("idClient") Integer idClient,
+                                                                      @Param("statusOfPayment") Boolean statusOfPayment);
 
 
     @Query(value = "select c  from ClientInvestment  as c " +
@@ -45,4 +45,26 @@ public interface ClientInvestmentRepository extends JpaRepository<ClientInvestme
     @Query(value = "select c  from ClientInvestment  as c " +
             " JOIN FETCH c.idClient WHERE  c.idClient.id = :idClient  ")
     List<ClientInvestment> getClientInvestments(Integer idClient);
+
+
+    /**
+     * COALESCE recupera il primo elemento 'non null' , in questo caso se  'firstName' e null fa la join con tutti i nomi
+     */
+/*    @Query("select c from ClientInvestment AS c " +
+            " LEFT JOIN Investment invests ON c.idInvestment = invests.id " +
+            " LEFT JOIN Client clients ON c.idClient = clients.id " +
+            " WHERE clients.firstName = COALESCE(:firstName, clients.firstName) "+
+            " AND clients.lastName = COALESCE(:lastName, clients.lastName)"
+    )*/
+    @Query("select c from ClientInvestment AS c " +
+            "LEFT JOIN Investment invests ON c.idInvestment = invests.id " +
+            "LEFT JOIN Client clients ON c.idClient = clients.id " +
+            /** Se e null NON cerca nella join (se esegue ricerca nella join sul db cercherebbe il valore a null, non ci serve)
+             * LA CONDIZIONE NON VIENE ESEGUITA SE IL VALORE E NULL */
+            "WHERE (:firstName is null OR clients.firstName = :firstName) " +
+            "AND (:lastName is null OR clients.lastName = :lastName) " +
+            "AND (:investmentName is null OR invests.name = :investmentName) " +
+            "AND (:statusOfPayment is null OR c.statusOfPayment = :statusOfPayment) ")
+    List<ClientInvestment> findClientInvestmentByIdClientAndIdInvestmentAndStatusOfPayment(@Param("firstName") String firstName, @Param("lastName") String lastName,
+                                                                                           @Param("investmentName") String investmentName,@Param("statusOfPayment")Boolean statusOfPayment);
 }

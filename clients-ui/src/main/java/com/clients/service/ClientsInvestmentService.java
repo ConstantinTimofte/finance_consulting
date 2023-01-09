@@ -2,6 +2,7 @@ package com.clients.service;
 
 
 import com.model.clientinvest.ClientInvestmentsFeign;
+import com.model.clientinvest.SearchInvestmentDto;
 import com.model.investment.InvestmentsOfClientsDto;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,11 @@ public class ClientsInvestmentService {
         clientInvestmentsFeign.deletetSavedInvestment(investmentsOfClientsDto);
     }
 
-    public void activateExpiredInvestment(InvestmentsOfClientsDto investmentsOfClientsDto){
+    public void activateExpiredInvestment(InvestmentsOfClientsDto investmentsOfClientsDto) {
         clientInvestmentsFeign.activateexpiredinvestment(investmentsOfClientsDto);
+    }
+
+    public List<InvestmentsOfClientsDto> searchInvestments(SearchInvestmentDto searchInvestmentDto) {
+        return clientInvestmentsFeign.searchInvestment(searchInvestmentDto);
     }
 }

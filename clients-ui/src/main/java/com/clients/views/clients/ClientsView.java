@@ -70,9 +70,7 @@ public class ClientsView extends VerticalLayout {
 
         grid.getColumns().forEach(columns -> columns.setAutoWidth(true)); // gestire oggetto per oggetto
 
-        grid.addColumn(createActionRenderer())
-                //    .setAutoWidth(true).setFlexGrow(0).setHeader("Action");
-                .setAutoWidth(true);
+        grid.addColumn(createActionRenderer()).setAutoWidth(true);
 
         /*Selezionando una colonna (SELEZIONANDO LA STESSA L OGGETTO E NULL)*/
         grid.asSingleSelect().addValueChangeListener(event -> editClient(event.getValue()));
@@ -207,10 +205,16 @@ public class ClientsView extends VerticalLayout {
                 /*E cliente ed ha pagato*/
                 icon = VaadinIcon.CHECK.create();
                 icon.getElement().getThemeList().add("badge success");
+                icon.addClickListener(event -> {
+                    //TODO RITORNARE INVESTIMENTI PAGATI
+                });
             } else if (clientDto.getClient() && (!clientDto.getPayment())) {
                 /*E cliente e  non ha pagato*/
                 icon = VaadinIcon.CLOSE_SMALL.create();
                 icon.getElement().getThemeList().add("badge error");
+                icon.addClickListener(event -> {
+                    //TODO RITORNARE INVESTIMENTI NON PAGATI
+                });
             }
         }
         icon.getStyle().set("padding", "var(--lumo-space-xs");
