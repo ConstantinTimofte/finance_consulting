@@ -4,9 +4,13 @@ import com.clients.form.ClientForm;
 import com.clients.form.ClientInvestmentForm;
 import com.clients.service.ClientService;
 import com.clients.views.MainLayout;
+import com.clients.views.clients.clientsinvests.InvestmentOfClientsView;
 import com.model.client.ClientDto;
 import com.model.clientinvest.ClientInvestmentDto;
+import com.model.clientinvest.SearchInvestmentDto;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentUtil;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
@@ -33,9 +37,12 @@ public class ClientsView extends VerticalLayout {
     private ClientInvestmentForm clientInvestmentForm;
     private TextField filterText = new TextField();
     private ClientService clientService;
+    Button buttons = new Button();
 
     public ClientsView(ClientService clientService) {
         this.clientService = clientService;
+        /** BOTTONE CHE USO PER CAMBIARE VISTA - NON DEVE ESSERE VISIBILE*/
+        buttons.setVisible(false);
 
         addClassName("list-view");/*classe css se presente*/
         setSizeFull();
@@ -43,7 +50,7 @@ public class ClientsView extends VerticalLayout {
         configureForm();
         configureClientInvestmentForm();
 
-        add(getToolbar(), getContent());
+        add(getToolbar(), getContent(), buttons);
         updateList();
         closeEditor();
         closeClientInvestmentForm();
@@ -63,7 +70,7 @@ public class ClientsView extends VerticalLayout {
         // grid.setColumns("firstName", "lastName", "emailAdress", "status");
         grid.setColumns("firstName", "lastName", "emailAdress");
 
-        grid.addComponentColumn(clientDto -> createStatusIcon(clientDto))
+        grid.addComponentColumn(clientDto -> createStatusButton(clientDto))
                 .setHeader("Payment");
 
         grid.addColumn(createIsClientComponentRenderer()).setHeader("Status");
@@ -195,30 +202,41 @@ public class ClientsView extends VerticalLayout {
     }
 
 
-    private Icon createStatusIcon(ClientDto clientDto) {
-        Icon icon = new Icon();
+    public void call(ClientDto clientDto) {
+        ComponentUtil.setData(UI.getCurrent(), SearchInvestmentDto.class,
+                new SearchInvestmentDto(clientDto.getFirstName(), clientDto.getLastName(), clientDto.getPayment().toString(), ""));
+
+        buttons.getUI().ifPresent(ui ->
+                ui.navigate(InvestmentOfClientsView.class));
+    }
+
+    private Button createStatusButton(ClientDto clientDto) {
+        Icon icon;
+        Button button = new Button();
         if (clientDto.getPayment() == null) {
             /*Non e cliente*/
-            icon.setVisible(false);
+            button.setVisible(false);
         } else {
+            icon = new Icon();
             if (clientDto.getClient() && clientDto.getPayment()) {
                 /*E cliente ed ha pagato*/
                 icon = VaadinIcon.CHECK.create();
                 icon.getElement().getThemeList().add("badge success");
-                icon.addClickListener(event -> {
-                    //TODO RITORNARE INVESTIMENTI PAGATI
-                });
+
+                icon.addClickListener(e -> call(clientDto));
+
             } else if (clientDto.getClient() && (!clientDto.getPayment())) {
                 /*E cliente e  non ha pagato*/
                 icon = VaadinIcon.CLOSE_SMALL.create();
                 icon.getElement().getThemeList().add("badge error");
-                icon.addClickListener(event -> {
-                    //TODO RITORNARE INVESTIMENTI NON PAGATI
-                });
+
+                icon.addClickListener(e -> call(clientDto));
+
             }
+            icon.getStyle().set("padding", "var(--lumo-space-xs");
+            button = new Button(icon);
         }
-        icon.getStyle().set("padding", "var(--lumo-space-xs");
-        return icon;
+        return button;
     }
 
     //https://lbruun.github.io/Vaadin.LitRenderer-Examples/#_create_an_icon_button

@@ -6,6 +6,8 @@ import com.clients.views.MainLayout;
 import com.model.clientinvest.SearchInvestmentDto;
 import com.model.investment.InvestmentsOfClientsDto;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentUtil;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -21,9 +23,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
-import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.Route;
-import com.vaadin.flow.shared.ui.Dependency;
+import com.vaadin.flow.router.*;
 
 import java.util.List;
 import java.util.Set;
@@ -47,6 +47,7 @@ public class InvestmentOfClientsView extends VerticalLayout {
 
     public InvestmentOfClientsView(ClientsInvestmentService clientsInvestmentService) {
         this.clientsInvestmentService = clientsInvestmentService;
+
         updateList();
         setSizeFull();
         configureGrid();
@@ -62,18 +63,6 @@ public class InvestmentOfClientsView extends VerticalLayout {
         grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
         grid.setSizeFull();//lunghezza grid
         grid.setSizeFull();
-
-        //  grid.addColumn(Person::getFullName).setHeader("Name");
-
-        /*  grid.addColumn(
-                new ComponentRenderer<>(Button::new, (button, person) -> {
-                    button.addThemeVariants(ButtonVariant.LUMO_ICON,
-                            ButtonVariant.LUMO_ERROR,
-                            ButtonVariant.LUMO_TERTIARY);
-                    button.addClickListener(e -> this.removeInvitation(person));
-                    button.setIcon(new Icon(VaadinIcon.TRASH));
-                })).setHeader("Manage");
-        * */
         grid.setColumns("firstName", "lastName", "investmentName", "expiringDate", "remainingDays");
 
         grid.addComponentColumn(investmentsOfClientsDto -> createStatusIcon(investmentsOfClientsDto)).setHeader("Status of Payment");
@@ -163,6 +152,11 @@ public class InvestmentOfClientsView extends VerticalLayout {
         this.investmentName.setItems(investmentName);
         this.status.setItems("Payd", "Expired");
         setSearchingEvent();
+
+        SearchInvestmentDto searchInvestmentDto = ComponentUtil.getData(UI.getCurrent(), SearchInvestmentDto.class);
+        if (searchInvestmentDto != null) {
+            setSearchParams(searchInvestmentDto);
+        }
     }
 
     private void setSearchingEvent() {
@@ -178,4 +172,13 @@ public class InvestmentOfClientsView extends VerticalLayout {
 
         grid.setItems(investmentsSearch);
     }
+
+    public void setSearchParams(SearchInvestmentDto searchInvestmentDto) {
+        firstName.setValue(searchInvestmentDto.getFirstName());
+        lastName.setValue(searchInvestmentDto.getLastName());
+        status.setValue(searchInvestmentDto.getStatus() == "true" ? "Payd" : "Expired");
+        ComponentUtil.setData(UI.getCurrent(), SearchInvestmentDto.class,
+                null);
+    }
+
 }
