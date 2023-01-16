@@ -12,13 +12,17 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.LitRenderer;
@@ -36,6 +40,10 @@ public class ClientsView extends VerticalLayout {
     private ClientForm clientForm;
     private ClientInvestmentForm clientInvestmentForm;
     private TextField filterText = new TextField();
+
+    ComboBox<String> contatSelect = new ComboBox<>();
+    ComboBox<String> paymentSelect = new ComboBox<>();
+
     private ClientService clientService;
     Button buttons = new Button();
 
@@ -81,6 +89,7 @@ public class ClientsView extends VerticalLayout {
 
         /*Selezionando una colonna (SELEZIONANDO LA STESSA L OGGETTO E NULL)*/
         grid.asSingleSelect().addValueChangeListener(event -> editClient(event.getValue()));
+        grid.setSizeFull();
     }
 
     /*EVENTI PRINCIPALI DELLA FORM*/
@@ -109,15 +118,38 @@ public class ClientsView extends VerticalLayout {
         ('char') utile per non eseguire chiamate multiple al database */
         filterText.setValueChangeMode(ValueChangeMode.LAZY);
         filterText.addValueChangeListener(e -> updateList());/*ad ogni cambiamento chiama il metodo*/
-        filterText.setWidth("45em");
+        filterText.setWidth("30em");
 
         Button clientButton = new Button("New client", VaadinIcon.PLUS.create());
         clientButton.addClickListener(event -> saveClient());//Reindirizzamento sulla form
         clientButton.setAutofocus(true);
+        clientButton.setWidth("13em");
 
-        HorizontalLayout toolbar = new HorizontalLayout(filterText, clientButton);
+        Button resetButton = new Button("Reset");
+        resetButton.addClickListener(event -> resetSearch());
+        resetButton.setAutofocus(true);
+
+        returnStatusAndPaymentLayout();
+        HorizontalLayout toolbar = new HorizontalLayout(clientButton, resetButton, filterText, contatSelect, paymentSelect);
+        toolbar.setWidthFull();
         toolbar.addClassName("toolbar");
         return toolbar;
+    }
+
+    private void resetSearch() {
+        filterText.setValue("");
+        contatSelect.setValue("");
+        paymentSelect.setValue("");
+    }
+
+    private void returnStatusAndPaymentLayout() {
+        contatSelect.setPlaceholder("Contact type");
+        contatSelect.setItems("CLIENT", "CONTACT");
+        contatSelect.setClearButtonVisible(true);
+
+        paymentSelect.setPlaceholder("Payment");
+        paymentSelect.setItems("YES", "NO");
+        paymentSelect.setClearButtonVisible(true);
     }
 
 
