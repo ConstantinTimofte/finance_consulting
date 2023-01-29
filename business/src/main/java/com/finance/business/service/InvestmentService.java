@@ -65,12 +65,19 @@ public class InvestmentService {
         clientRepository.save(client);
     }
 
+    @Transactional
     public void activateExpiredInvestment(InvestmentsOfClientsDto investmentsOfClientsDto) {
         ClientInvestment currentClientInvestment = clientInvestmentRepository.findById(investmentsOfClientsDto.getId()).get();
         currentClientInvestment.setStatusOfPayment(true);
         currentClientInvestment.setActivationInvestment(LocalDate.now());
-
         clientInvestmentRepository.save(currentClientInvestment);
+
+        // AGGIORNO STATO INVESTIMENTI CLIENTE
+        Client client = clientRepository.findClientByFirstNameAndLastName(investmentsOfClientsDto.getFirstName(), investmentsOfClientsDto.getLastName());
+        long countNonPayd = clientInvestmentRepository.findClientInvestmentsListWithPaymentStatus(client.getId(), false).size();
+        client.setPayment(countNonPayd > 0 ? false : true);
+
+        clientRepository.save(client);
     }
 
     public List<InvestmentsOfClientsDto> searchInvestment(SearchInvestmentDto searchInvestmentDto) throws Exception {
@@ -87,7 +94,7 @@ public class InvestmentService {
             }
 
             List<ClientInvestment> investmentsOfClientsList = clientInvestmentRepository.findClientInvestmentByIdClientAndIdInvestmentAndStatusOfPayment(searchInvestmentDto.getFirstName(),
-                    searchInvestmentDto.getLastName(),searchInvestmentDto.getInvestmentName(),statusPayment);
+                    searchInvestmentDto.getLastName(), searchInvestmentDto.getInvestmentName(), statusPayment);
 
             createInvestmentsOfClientsDto(investmentsOfClientsDtoList, investmentsOfClientsList);
         }

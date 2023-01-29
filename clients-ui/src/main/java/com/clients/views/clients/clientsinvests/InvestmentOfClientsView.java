@@ -40,10 +40,10 @@ public class InvestmentOfClientsView extends VerticalLayout {
     private ClientsInvestmentService clientsInvestmentService;
     private Grid<InvestmentsOfClientsDto> grid = new Grid<>(InvestmentsOfClientsDto.class);
 
-    public ComboBox<String> firstName = new ComboBox<>("First name");
-    public ComboBox<String> lastName = new ComboBox<>("Last name");
-    public ComboBox<String> status = new ComboBox<>("Status");
-    public ComboBox<String> investmentName = new ComboBox<>("InvestmentName");
+    private ComboBox<String> firstName = new ComboBox<>("First name");
+    private ComboBox<String> lastName = new ComboBox<>("Last name");
+    private ComboBox<String> status = new ComboBox<>("Status");
+    private ComboBox<String> investmentName = new ComboBox<>("InvestmentName");
 
     public InvestmentOfClientsView(ClientsInvestmentService clientsInvestmentService) {
         this.clientsInvestmentService = clientsInvestmentService;
@@ -83,9 +83,9 @@ public class InvestmentOfClientsView extends VerticalLayout {
                 notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
                 notification.open();
             });
-
             return button;
         }).setHeader("Action");
+
     }
 
     private Component getContent() {

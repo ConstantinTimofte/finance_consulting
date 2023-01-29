@@ -12,8 +12,10 @@ public interface ClientFeign {
     @GetMapping("/all")
     List<ClientDto> findAllClients();
 
-    @GetMapping("/search/{searchTerm}")
-    List<ClientDto> search(@PathVariable("searchTerm") String searchTerm);
+    @GetMapping("/search")
+    List<ClientDto> search(@RequestParam(value = "searchTerm", required = false) String searchTerm,
+                                  @RequestParam(value = "contactType", required = false) String contactType,
+                                  @RequestParam(value = "payment", required = false) String payment);
 
     @PostMapping("/save")
     void save(@RequestBody ClientDto clientDto);

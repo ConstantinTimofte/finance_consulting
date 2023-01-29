@@ -5,6 +5,7 @@ import com.model.client.ClientFeign;
 import com.model.clientinvest.ClientInvestmentDto;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
@@ -13,11 +14,14 @@ public class ClientService {
 
     private final ClientFeign clientFeign;
 
-    public List<ClientDto> findAllContacts(String filterText) {
-        if (filterText == null || filterText.isEmpty()) {
+    public List<ClientDto> findAllContacts(String filterText, String contactType, String payment) {
+
+        if (filterText == null || filterText.trim().isEmpty()
+                && contactType == null && payment == null) {
+            /** layout di search vuoto */
             return clientFeign.findAllClients();
         } else {
-            return clientFeign.search(filterText);
+            return clientFeign.search(filterText,contactType,payment);
         }
     }
 
@@ -42,7 +46,9 @@ public class ClientService {
         }
     }
 
-    /** Proponi investimenti che il cliente non ha ancora fatto*/
+    /**
+     * Proponi investimenti che il cliente non ha ancora fatto
+     */
     public List<String> getPossibleInvestments(String firstName, String secondName) {
         return clientFeign.allInvestments(firstName, secondName);
     }

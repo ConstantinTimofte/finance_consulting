@@ -15,14 +15,11 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.LitRenderer;
@@ -40,9 +37,8 @@ public class ClientsView extends VerticalLayout {
     private ClientForm clientForm;
     private ClientInvestmentForm clientInvestmentForm;
     private TextField filterText = new TextField();
-
-    ComboBox<String> contatSelect = new ComboBox<>();
-    ComboBox<String> paymentSelect = new ComboBox<>();
+    private ComboBox<String> contatSelect = new ComboBox<>();
+    private ComboBox<String> paymentSelect = new ComboBox<>();
 
     private ClientService clientService;
     Button buttons = new Button();
@@ -69,6 +65,9 @@ public class ClientsView extends VerticalLayout {
      * https://vaadin.com/docs/latest/components/grid/flow#sorting
      * Theme : https://www.youtube.com/watch?v=Swki9XXs9SA  16.27
      */
+
+    private void setSearchClientDto(){
+    }
     private void configureGrid() {
         grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
         grid.addClassName("contact-grid");//classe css
@@ -118,6 +117,9 @@ public class ClientsView extends VerticalLayout {
         ('char') utile per non eseguire chiamate multiple al database */
         filterText.setValueChangeMode(ValueChangeMode.LAZY);
         filterText.addValueChangeListener(e -> updateList());/*ad ogni cambiamento chiama il metodo*/
+        contatSelect.addValueChangeListener(e-> updateList());
+        paymentSelect.addValueChangeListener(e-> updateList());
+
         filterText.setWidth("30em");
 
         Button clientButton = new Button("New client", VaadinIcon.PLUS.create());
@@ -140,6 +142,7 @@ public class ClientsView extends VerticalLayout {
         filterText.setValue("");
         contatSelect.setValue("");
         paymentSelect.setValue("");
+        grid.setItems(clientService.findAllContacts(filterText.getValue(),contatSelect.getValue(),paymentSelect.getValue()));//passa tutti i filtri
     }
 
     private void returnStatusAndPaymentLayout() {
@@ -164,7 +167,7 @@ public class ClientsView extends VerticalLayout {
     }
 
     private void updateList() {
-        grid.setItems(clientService.findAllContacts(filterText.getValue()));
+        grid.setItems(clientService.findAllContacts(filterText.getValue(),contatSelect.getValue(),paymentSelect.getValue()));//passa tutti i filtri
     }
 
     private void closeEditor() {

@@ -88,6 +88,24 @@ public class ClientService {
         return investmentsThatClientCanInvest;
     }
 
+    public List<ClientDto> search(String searchTerm , String contactType, String payment){
+        Boolean isClient = isClient(contactType);
+        Boolean isPay = payment(payment);
+        searchTerm = searchTerm.trim().isEmpty() ? null : searchTerm;
+
+        List<Client> clientEntityList = clientRepository.search(searchTerm);
+
+            return  clientEntityList
+                .stream()
+                .filter(client -> isClient == null || client.getClient() == isClient)
+                .filter(client -> isPay == null || client.getPayment() == isPay)
+                .map(client -> modelMapper.map(client, ClientDto.class))
+                .collect(Collectors.toList());
+
+    }
+
+        // wirte me a fuction that takes List<Client> clientEntityList input ,
+        // and return List<ClientDto> clientEntityList output by adding filter on isClient and isPay
 
     public void findAllClients(Client client, List<ClientDto> clientEntityList) {
         if (client.getPayment() != null) {/*SE CLIENTE*/
@@ -120,4 +138,20 @@ public class ClientService {
         /*IL DEFAULT E SEMPRE TRUE*/
         return true;
     }
+
+
+    public Boolean isClient(String contacType) {
+        if (contacType != null) {
+            return contacType.contains("CLIENT");
+        }
+        return null;
+    }
+
+    public Boolean payment(String payment) {
+        if (payment != null) {
+            return payment.contains("Y");
+        }
+        return null;
+    }
+
 }

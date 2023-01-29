@@ -36,13 +36,13 @@ public class ClientController {
         return clientDtoList;
     }
 
-    @RequestMapping(value = "/search/{searchTerm}", method = RequestMethod.GET)
-    public List<ClientDto> search(@PathVariable("searchTerm") String searchTerm) {
-        List<Client> clientEntityList = clientRepository.search(searchTerm);
-        return clientEntityList
-                .stream()
-                .map(client -> modelMapper.map(client, ClientDto.class))
-                .collect(Collectors.toList());
+
+    @RequestMapping(value = "/search", method = RequestMethod.GET)
+    public List<ClientDto> search(@RequestParam(value = "searchTerm", required = false) String searchTerm,
+                                  @RequestParam(value = "contactType", required = false) String contactType,
+                                  @RequestParam(value = "payment", required = false) String payment) {
+
+        return clientService.search(searchTerm,contactType,payment);
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)

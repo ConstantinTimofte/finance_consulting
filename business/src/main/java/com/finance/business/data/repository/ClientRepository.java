@@ -13,8 +13,9 @@ import java.util.List;
 public interface ClientRepository extends JpaRepository<Client, Integer> {
 
     @Query("select c from Client c " +
-            "where lower(c.firstName) like lower(concat('%', :searchTerm, '%')) " +
-            "or lower(c.firstName) like lower(concat('%', :searchTerm, '%')) order by c.id ")
+            " where (:searchTerm is null OR c.firstName = :searchTerm )  " +
+            " OR (:searchTerm is not null AND ( lower(c.firstName) like lower(concat('%', :searchTerm, '%')) " +
+            "                                   or lower(c.firstName) like lower(concat('%', :searchTerm, '%')) ) ) ")
     List<Client> search(@Param("searchTerm") String searchTerm);
 
     Client findClientByFirstNameAndLastName(@Param("firstName") String firstName, @Param("lastName") String lastName);
