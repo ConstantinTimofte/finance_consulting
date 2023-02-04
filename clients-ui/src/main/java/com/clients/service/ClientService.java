@@ -21,7 +21,7 @@ public class ClientService {
             /** layout di search vuoto */
             return clientFeign.findAllClients();
         } else {
-            return clientFeign.search(filterText,contactType,payment);
+            return clientFeign.search(filterText, contactType, payment);
         }
     }
 
@@ -51,6 +51,10 @@ public class ClientService {
      */
     public List<String> getPossibleInvestments(String firstName, String secondName) {
         return clientFeign.allInvestments(firstName, secondName);
+    }
+
+    public void sendEmail(String email, String text) {
+        clientFeign.sendEmail(email, text);
     }
 
 }

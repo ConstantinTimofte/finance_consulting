@@ -3,6 +3,7 @@ package com.finance.business.controller;
 import com.finance.business.data.entity.Client;
 import com.finance.business.data.repository.ClientRepository;
 import com.finance.business.service.ClientService;
+import com.finance.business.service.EmailComponent;
 import com.model.client.ClientDto;
 import com.model.clientinvest.ClientInvestmentDto;
 import lombok.AllArgsConstructor;
@@ -22,6 +23,7 @@ public class ClientController {
     private final ModelMapper modelMapper;
     private final ClientRepository clientRepository;
     private final ClientService clientService;
+    private final EmailComponent emailComponent;
 
     /**
      * @see https://www.baeldung.com/java-modelmapper-lists
@@ -36,13 +38,12 @@ public class ClientController {
         return clientDtoList;
     }
 
-
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public List<ClientDto> search(@RequestParam(value = "searchTerm", required = false) String searchTerm,
                                   @RequestParam(value = "contactType", required = false) String contactType,
                                   @RequestParam(value = "payment", required = false) String payment) {
 
-        return clientService.search(searchTerm,contactType,payment);
+        return clientService.search(searchTerm, contactType, payment);
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
@@ -52,6 +53,7 @@ public class ClientController {
         modelMapper.map(clientDto, client);
         clientRepository.save(client);
     }
+
 
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     public void delete(@RequestBody ClientDto clientDto) {
@@ -76,5 +78,19 @@ public class ClientController {
     @RequestMapping(value = "/investments/{firstname}/{lastname}", method = RequestMethod.GET)
     public List<String> allInvestments(@PathVariable("firstname") String firstName, @PathVariable("lastname") String lastName) {
         return clientService.findClientInvestments(firstName, lastName);
+    }
+
+    /**
+     * Invia email
+     */
+    @RequestMapping(value = "/sendEmail/{email}/{text}", method = RequestMethod.GET)
+    public String sendEmail(@PathVariable("email") String email, @PathVariable("text") String text) {
+        try {
+          //  emailComponent.sendEmail(email, "FINANCE CONSULTING APP", text);
+            emailComponent.sendEmail(email, "FINANCE CONSULTING APP", text,1);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return "Success";
     }
 }

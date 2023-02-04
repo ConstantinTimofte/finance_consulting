@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(contextId = "clientContextId",value = "business", path = "/api/client")
+@FeignClient(contextId = "clientContextId", value = "business", path = "/api/client")
 public interface ClientFeign {
 
     @GetMapping("/all")
@@ -14,8 +14,8 @@ public interface ClientFeign {
 
     @GetMapping("/search")
     List<ClientDto> search(@RequestParam(value = "searchTerm", required = false) String searchTerm,
-                                  @RequestParam(value = "contactType", required = false) String contactType,
-                                  @RequestParam(value = "payment", required = false) String payment);
+                           @RequestParam(value = "contactType", required = false) String contactType,
+                           @RequestParam(value = "payment", required = false) String payment);
 
     @PostMapping("/save")
     void save(@RequestBody ClientDto clientDto);
@@ -28,4 +28,9 @@ public interface ClientFeign {
 
     @GetMapping("/investments/{firstname}/{lastname}")
     List<String> allInvestments(@PathVariable("firstname") String firstName, @PathVariable("lastname") String lastName);
+
+
+    @GetMapping("/sendEmail/{email}/{text}")
+    String sendEmail(@PathVariable("email") String email, @PathVariable("text") String text);
+
 }

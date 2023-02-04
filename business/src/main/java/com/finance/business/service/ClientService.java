@@ -60,7 +60,6 @@ public class ClientService {
         clientInvestmentRepository.save(clientInvestment);
     }
 
-
     public List<String> findClientInvestments(String firstName, String secondName) {
         List<String> investmentsThatClientCanInvest;
         Client client = clientRepository.findClientByFirstNameAndLastName(firstName, secondName);
@@ -104,8 +103,6 @@ public class ClientService {
 
     }
 
-        // wirte me a fuction that takes List<Client> clientEntityList input ,
-        // and return List<ClientDto> clientEntityList output by adding filter on isClient and isPay
 
     public void findAllClients(Client client, List<ClientDto> clientEntityList) {
         if (client.getPayment() != null) {/*SE CLIENTE*/

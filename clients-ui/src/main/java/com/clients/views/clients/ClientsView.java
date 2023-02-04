@@ -12,6 +12,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
@@ -66,8 +67,6 @@ public class ClientsView extends VerticalLayout {
      * Theme : https://www.youtube.com/watch?v=Swki9XXs9SA  16.27
      */
 
-    private void setSearchClientDto(){
-    }
     private void configureGrid() {
         grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
         grid.addClassName("contact-grid");//classe css
@@ -85,6 +84,16 @@ public class ClientsView extends VerticalLayout {
         grid.getColumns().forEach(columns -> columns.setAutoWidth(true)); // gestire oggetto per oggetto
 
         grid.addColumn(createActionRenderer()).setAutoWidth(true);
+        grid.addComponentColumn(clientDto -> {
+            Button button = new Button("Send");
+            button.setAutofocus(true);
+            button.addThemeVariants(ButtonVariant.LUMO_ERROR);
+            button.addClickListener(click -> {
+                clientService.sendEmail(clientDto.getEmailAdress(), "Payment expired");
+            });
+            button.setVisible(clientDto.getPayment() != null && clientDto.getPayment() == false);
+            return button;
+        }).setHeader("Notification");
 
         /*Selezionando una colonna (SELEZIONANDO LA STESSA L OGGETTO E NULL)*/
         grid.asSingleSelect().addValueChangeListener(event -> editClient(event.getValue()));
@@ -117,8 +126,8 @@ public class ClientsView extends VerticalLayout {
         ('char') utile per non eseguire chiamate multiple al database */
         filterText.setValueChangeMode(ValueChangeMode.LAZY);
         filterText.addValueChangeListener(e -> updateList());/*ad ogni cambiamento chiama il metodo*/
-        contatSelect.addValueChangeListener(e-> updateList());
-        paymentSelect.addValueChangeListener(e-> updateList());
+        contatSelect.addValueChangeListener(e -> updateList());
+        paymentSelect.addValueChangeListener(e -> updateList());
 
         filterText.setWidth("30em");
 
@@ -142,7 +151,7 @@ public class ClientsView extends VerticalLayout {
         filterText.setValue("");
         contatSelect.setValue("");
         paymentSelect.setValue("");
-        grid.setItems(clientService.findAllContacts(filterText.getValue(),contatSelect.getValue(),paymentSelect.getValue()));//passa tutti i filtri
+        grid.setItems(clientService.findAllContacts(filterText.getValue(), contatSelect.getValue(), paymentSelect.getValue()));//passa tutti i filtri
     }
 
     private void returnStatusAndPaymentLayout() {
@@ -167,7 +176,7 @@ public class ClientsView extends VerticalLayout {
     }
 
     private void updateList() {
-        grid.setItems(clientService.findAllContacts(filterText.getValue(),contatSelect.getValue(),paymentSelect.getValue()));//passa tutti i filtri
+        grid.setItems(clientService.findAllContacts(filterText.getValue(), contatSelect.getValue(), paymentSelect.getValue()));//passa tutti i filtri
     }
 
     private void closeEditor() {
