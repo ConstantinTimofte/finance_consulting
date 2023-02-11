@@ -1,3 +1,7 @@
 # Project exclude paths
 /clients-ui/node_modules/
 /node_modules/
+/emailservice/.mvn/wrapper/*.jar
+/emailservice/.mvn/wrapper/maven-wrapper.properties
+/emailservice/mvnw.cmd
+/emailservice/.mvn/wrapper/maven-wrapper.jar

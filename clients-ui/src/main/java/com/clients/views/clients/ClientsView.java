@@ -89,7 +89,7 @@ public class ClientsView extends VerticalLayout {
             button.setAutofocus(true);
             button.addThemeVariants(ButtonVariant.LUMO_ERROR);
             button.addClickListener(click -> {
-                clientService.sendEmail(clientDto.getEmailAdress(), "Payment expired");
+                clientService.sendEmail(clientDto.getEmailAdress(), "PAYMENT_EXPIRED");
             });
             button.setVisible(clientDto.getPayment() != null && clientDto.getPayment() == false);
             return button;

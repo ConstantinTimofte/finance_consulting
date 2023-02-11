@@ -1,0 +1,4 @@
+posizionati con cd dove lo vuoi creare
+importa il certificato .cer da un hoist
+
+keytool -import -trustcacerts -alias certificate -file C:\Development\workspace_es\finance_consulting_app\finance_consulting\emailservice\src\main\resources\certificate\certificate.cer -keystore keystore.jks -storepass password

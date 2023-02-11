@@ -11,6 +11,7 @@
         <module name="business" />
         <module name="eureka-server" />
         <module name="client-ui" />
+        <module name="emailservice" />
       </profile>
     </annotationProcessing>
   </component>
@@ -18,6 +19,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="business" options="-parameters" />
       <module name="client-ui" options="-parameters" />
+      <module name="emailservice" options="-parameters" />
       <module name="eureka-server" options="-parameters" />
       <module name="model" options="-parameters" />
     </option>
