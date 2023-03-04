@@ -13,6 +13,20 @@ services:
     networks:
       - postgres
 
+  tracker-investor:
+    container_name: tracker-investor
+    image: postgres:12.3-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: constantin
+      POSTGRES_PASSWORD: constantin
+    volumes:
+      - tracker-investor:/var/lib/postgresql/data
+    ports:
+      - 5433:5432
+    networks:
+      - postgres
+
   pgadmin:
     container_name: pgadmin
     image: dpage/pgadmin4:6.13
@@ -28,8 +42,6 @@ services:
     networks:
       - postgres
 
-
-
 networks:
   postgres:
     driver: bridge
@@ -37,3 +49,4 @@ networks:
 volumes:
   postgres:
   pgadmin:
+  tracker-investor:

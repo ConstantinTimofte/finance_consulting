@@ -51,7 +51,7 @@ public class Client {
     @Column(name = "notes", length = 10485760)
     private String notes;
 
-    @OneToMany(mappedBy = "idClient", fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "idClient", cascade = CascadeType.ALL)
     private List<ClientInvestment> clientInvestments = new ArrayList<>();
 
 }

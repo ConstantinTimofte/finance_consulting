@@ -26,7 +26,7 @@ public class Investment {
     @Column(name = "description", length = 10485760)
     private String description;
 
-    @OneToMany(mappedBy = "idInvestment", fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "idInvestment",cascade = CascadeType.ALL)
     private List<ClientInvestment> clientInvestments = new ArrayList<>();
 
 
