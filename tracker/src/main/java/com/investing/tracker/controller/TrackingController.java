@@ -1,14 +1,10 @@
 package com.investing.tracker.controller;
 
-import com.investing.tracker.model.dto.InvestingTrkDto;
+import com.investing.tracker.model.dto.InvestingTrkFormDTO;
 import com.investing.tracker.service.TRackerService;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/track")
@@ -17,9 +13,25 @@ public class TrackingController {
 
     private final TRackerService tRackerService;
 
-    @RequestMapping(value = "/{firstname}/{lastname}/{investingname}", method = RequestMethod.GET)
-    public List<InvestingTrkDto> search(@PathVariable("firstname") String firstName, @PathVariable("lastname") String lastName
-            , @PathVariable("investingname") String investingName) {
+/*    @RequestMapping(value = {
+            "/{firstname}/{lastname}/{investingname}",
+            "/{firstname}//{investingname}",
+            "/{firstname}/{lastname}",
+            "/{firstname}",
+            "//{lastname}"
+    }, method = RequestMethod.GET)
+    public InvestingTrkFormDTO search(@PathVariable(value = "firstname", required = false) String firstName,
+                                      @PathVariable(value = "lastname", required = false) String lastName,
+                                      @PathVariable(value = "investingname", required = false) String investingName) {
+
+        return tRackerService.search(firstName, lastName, investingName);
+    }*/
+
+
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public InvestingTrkFormDTO search(@RequestParam(value = "firstname", required = false) String firstName,
+                                      @RequestParam(value = "lastname", required = false) String lastName,
+                                      @RequestParam(value = "investingname", required = false) String investingName) {
 
         return tRackerService.search(firstName, lastName, investingName);
     }

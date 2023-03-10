@@ -1,8 +1,6 @@
 package com.investing.tracker.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -14,11 +12,13 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Getter
+@Setter
+@Builder
 public class InvestingTrk {
     @Id
     @Column(name = "id", nullable = false)
     private Integer id;
-
 
     @Column(name = "first_name", nullable = false)
     private String firstName;
