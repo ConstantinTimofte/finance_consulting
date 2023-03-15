@@ -19,5 +19,4 @@ public interface ClientRepository extends JpaRepository<Client, Integer> {
     List<Client> search(@Param("searchTerm") String searchTerm);
 
     Client findClientByFirstNameAndLastName(@Param("firstName") String firstName, @Param("lastName") String lastName);
-
 }
